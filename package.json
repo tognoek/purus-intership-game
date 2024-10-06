@@ -1,0 +1,17 @@
+{
+  "name": "tognoek",
+  "version": "1.0.0",
+  "description": "",
+  "main": "network.js",
+  "scripts": {
+    "start" : "nodemon ./Server/index.js",
+    "open" : "nodemon ./Client/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ws": "^8.18.0"
+  }
+}
