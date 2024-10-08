@@ -1,15 +1,16 @@
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 1582 });
+import WebSocket, { WebSocketServer } from 'ws';
 
-wss.on('connection', (ws) => {
+const wss = new WebSocketServer({ port: 1582 });
+
+wss.on('connection', (ws: WebSocket) => {
     console.log('New player connected');
 
-    ws.on('message', (message) => {
+    ws.on('message', (message: WebSocket.Data) => {
         console.log('Received:', message.toString());
 
-        wss.clients.forEach(client => {
+        wss.clients.forEach((client) => {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({"Key" : "values"}));
+                client.send(JSON.stringify({ "Key": "values" }));
             }
         });
     });
