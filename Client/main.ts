@@ -8,17 +8,34 @@ const app = new pc.Application(canvas);
 app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
 app.setCanvasResolution(pc.RESOLUTION_AUTO);
 window.onresize = () => app.resizeCanvas();
+
 (async () => {
+    const socket = new WebSocket('ws://192.168.0.93:1582'); // Thay địa chỉ IP của máy server
+
+    socket.onopen = function () {
+        console.log('Connected to server');
+    };
+
+    socket.onmessage = function (event: MessageEvent) {
+        const data = JSON.parse(event.data);
+        if (data.action === 'move') {
+            const otherPlayer = app.root.findByName('OtherPlayer');
+            otherPlayer?.setPosition(data.position.x, data.position.y, data.position.z);
+        }
+    };
+
     pc.WasmModule.setConfig('Ammo', {
         glueUrl: './lib/ammo/ammo.wasm.js',
         wasmUrl: './lib/ammo/ammo.wasm.wasm',
         fallbackUrl: './lib/ammo/ammo.js',
     });
 
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
         pc.WasmModule.getInstance('Ammo', () => resolve());
     });
+    
     app.start();
+
     const assets = {
         charModelAsset: new pc.Asset('Character', 'model', {
             url: 'Assets/Models/mage.glb',
@@ -33,10 +50,12 @@ window.onresize = () => app.resizeCanvas();
             url: 'Assets/Animations/walk.glb',
         }),
     };
+
     const assetListLoader = new pc.AssetListLoader(
         Object.values(assets),
         app.assets
     );
+
     assetListLoader.load(() => {
         const characterEntity = new pc.Entity('Character');
         app.root.addChild(characterEntity);
@@ -55,7 +74,7 @@ window.onresize = () => app.resizeCanvas();
         const scale = 1;
         characterEntity.setLocalScale(scale, scale, scale);
 
-        // add animation component
+        // Thêm thành phần animation
         characterEntity.addComponent('animation', {
             assets: [
                 assets.charRunAnimationAsset,
@@ -64,9 +83,11 @@ window.onresize = () => app.resizeCanvas();
         });
         let currentAnim = assets.charIdleAnimationAsset.name;
         console.log(characterEntity.children);
+        console.log(characterEntity.getLocalScale())
     });
+
     // Thiết lập trọng lực cho thế giới vật lý
-    app.systems.rigidbody.gravity.set(0, -9.81, 0);
+    app?.systems?.rigidbody?.gravity.set(0, -9.81, 0);
     console.log('Physics world initialized');
 
     // Tạo mặt đất
@@ -108,7 +129,7 @@ window.onresize = () => app.resizeCanvas();
     app.root.addChild(box);
 
     const box1 = new pc.Entity('Box');
-    app.root.addChild(box);
+    app.root.addChild(box1);
     box1.addComponent('model', {
         type: 'box',
     });
@@ -126,6 +147,7 @@ window.onresize = () => app.resizeCanvas();
 
     // Thêm hộp vào cảnh
     app.root.addChild(box1);
+
     // Thêm ánh sáng
     const light = new pc.Entity('Directional Light');
     light.addComponent('light', {
@@ -150,16 +172,16 @@ window.onresize = () => app.resizeCanvas();
     box.collision?.on('collisionstart', (resolve) => {
         console.log(resolve.other.name);
     });
+
     // Hàm xử lý sự kiện bàn phím
     const forceMagnitude = 100;
-    const moveBox = (event) => {
+    const moveBox = (event: KeyboardEvent) => {
         const force = new pc.Vec3();
 
         switch (event.key) {
             case 'w':
             case 'W':
                 force.set(0, 0, -forceMagnitude); // Lực lên trên
-                // box.translate(0, 10, 0);
                 break;
             case 's':
             case 'S':
@@ -178,7 +200,7 @@ window.onresize = () => app.resizeCanvas();
         }
 
         // Áp dụng lực vào hộp
-        box.rigidbody.applyForce(force);
+        box?.rigidbody?.applyForce(force);
     };
 
     // Lắng nghe sự kiện keydown

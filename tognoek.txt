@@ -1,0 +1,35 @@
+/game-project
+│
+├── /client                # Thư mục chứa code của client
+│   ├── /assets            # Chứa các tài nguyên như hình ảnh, âm thanh, mô hình 3D, texture
+│   ├── /components        # Các component UI (menu, HUD, etc.)
+│   ├── /core              # Chứa các logic chung (networking, input handling)
+│   │   ├── Network.js     # Xử lý kết nối và giao tiếp với server (WebSocket)
+│   │   ├── Input.js       # Xử lý đầu vào từ người chơi (bàn phím, chuột)
+│   │   └── Game.js        # Tạo game, cập nhật, render
+│   ├── /scenes            # Các cảnh trong game (loading, gameplay, lobby)
+│   ├── /systems           # Các hệ thống xử lý (animation, physics, rendering)
+│   ├── /entities          # Các thực thể trong game (player, bullet, item)
+│   ├── /utils             # Các tiện ích chung (helper functions)
+│   └── main.js            # Điểm bắt đầu của client (khởi tạo game)
+│
+├── /server                # Thư mục chứa code của server
+│   ├── /core              # Các logic cốt lõi của server
+│   │   ├── Server.js      # Tạo server (WebSocket, Express)
+│   │   ├── Physics.js     # Xử lý vật lý (Ammo.js) trên server
+│   │   ├── GameManager.js # Quản lý trạng thái của game (game loop, tạo phòng)
+│   ├── /models            # Các mô hình dữ liệu (Player, Room, Bullet)
+│   ├── /controllers       # Điều khiển các hành động (xử lý bắn súng, cập nhật vị trí)
+│   ├── /services          # Các dịch vụ hỗ trợ (điểm số, quản lý kết nối)
+│   ├── /utils             # Các tiện ích cho server (helper functions)
+│   └── index.js           # Điểm bắt đầu của server (chạy server)
+│
+├── /shared                # Chứa code dùng chung giữa client và server
+│   ├── constants.js       # Các hằng số chung (loại sự kiện, trạng thái game)
+│   ├── types.js           # Các kiểu dữ liệu (PlayerData, BulletData)
+│   └── helpers.js         # Các hàm hỗ trợ (tính khoảng cách, xử lý dữ liệu)
+│
+├── package.json           # Thông tin dự án và các dependency
+├── vite.config.js         # Cấu hình Vite cho client
+├── .env                   # Các biến môi trường cho client/server
+└── README.md              # Hướng dẫn và mô tả dự án

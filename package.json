@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "ammo.js": "^0.0.10",
+    "ammojs-typed": "github:giniedp/ammojs-typed",
     "playcanvas": "^2.0.0"
   }
 }
