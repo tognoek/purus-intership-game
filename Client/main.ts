@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import Messenger from './Services/Messenger';
 
 // Thiết lập canvas và ứng dụng
 const canvas = document.createElement('canvas');
@@ -10,18 +11,14 @@ app.setCanvasResolution(pc.RESOLUTION_AUTO);
 window.onresize = () => app.resizeCanvas();
 
 (async () => {
-    const socket = new WebSocket('ws://192.168.0.93:1582'); // Thay địa chỉ IP của máy server
+    const socket = new WebSocket('ws://192.168.1.9:5050'); // Thay địa chỉ IP của máy server
 
-    socket.onopen = function () {
+    socket.onopen = () => {
         console.log('Connected to server');
     };
 
-    socket.onmessage = function (event: MessageEvent) {
-        const data = JSON.parse(event.data);
-        if (data.action === 'move') {
-            const otherPlayer = app.root.findByName('OtherPlayer');
-            otherPlayer?.setPosition(data.position.x, data.position.y, data.position.z);
-        }
+    socket.onmessage = (data: MessageEvent) => {
+        console.log(data.data);
     };
 
     pc.WasmModule.setConfig('Ammo', {
@@ -33,7 +30,7 @@ window.onresize = () => app.resizeCanvas();
     await new Promise<void>((resolve) => {
         pc.WasmModule.getInstance('Ammo', () => resolve());
     });
-    
+
     app.start();
 
     const assets = {
@@ -71,8 +68,8 @@ window.onresize = () => app.resizeCanvas();
             type: 'box',
             halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
         });
-        const scale = 1;
-        characterEntity.setLocalScale(scale, scale, scale);
+        // const scale = 1;
+        // characterEntity.setLocalScale(scale, scale, scale);
 
         // Thêm thành phần animation
         characterEntity.addComponent('animation', {
@@ -83,7 +80,7 @@ window.onresize = () => app.resizeCanvas();
         });
         let currentAnim = assets.charIdleAnimationAsset.name;
         console.log(characterEntity.children);
-        console.log(characterEntity.getLocalScale())
+        console.log(characterEntity.getLocalScale());
     });
 
     // Thiết lập trọng lực cho thế giới vật lý
@@ -113,6 +110,7 @@ window.onresize = () => app.resizeCanvas();
     box.addComponent('model', {
         type: 'box',
     });
+    
     box.setPosition(0, 5, 0);
 
     // Tạo thành phần Collision và RigidBody cho hộp
@@ -179,6 +177,17 @@ window.onresize = () => app.resizeCanvas();
         const force = new pc.Vec3();
 
         switch (event.key) {
+            case 'y':
+                socket.send(
+                    new Messenger(-221, {
+                        a: 'Xin chao',
+                        b: 1,
+                        c: [1, 2, 3],
+                        d: { ll: 23 },
+                    }).toString()
+                );
+                console.log(new Messenger(1, { a: 'Xin chao' }));
+                break;
             case 'w':
             case 'W':
                 force.set(0, 0, -forceMagnitude); // Lực lên trên

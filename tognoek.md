@@ -58,50 +58,51 @@ Mỗi mẫu thiết kế có thể giúp bạn tổ chức mã của mình tốt
 
 ```typescript
 interface Observer {
-    update(score: number): void;
+    update(state: string): void;
 }
 
-interface Subject {
-    attach(observer: Observer): void;
-    detach(observer: Observer): void;
-    notify(): void;
-}
+class Player implements Observer {
+    private name: string;
 
-class Scoreboard implements Observer {
-    private score: number = 0;
+    constructor(name: string) {
+        this.name = name;
+    }
 
-    public update(score: number): void {
-        this.score = score;
-        console.log(`Updated Score: ${this.score}`);
+    public update(state: string): void {
+        console.log(`${this.name} nhận được thông báo: Trạng thái người chơi thay đổi thành "${state}".`);
     }
 }
 
-class Game implements Subject {
+class Game {
     private observers: Observer[] = [];
-    private score: number = 0;
+    private state: string;
 
-    public attach(observer: Observer): void {
+    public addObserver(observer: Observer): void {
         this.observers.push(observer);
     }
 
-    public detach(observer: Observer): void {
-        const index = this.observers.indexOf(observer);
-        if (index !== -1) {
-            this.observers.splice(index, 1);
-        }
+    public removeObserver(observer: Observer): void {
+        this.observers = this.observers.filter(obs => obs !== observer);
     }
 
-    public notify(): void {
-        for (const observer of this.observers) {
-            observer.update(this.score);
-        }
+    public setState(state: string): void {
+        this.state = state;
+        this.notifyObservers();
     }
 
-    public playerKilled(): void {
-        this.score += 10; 
-        this.notify();
+    private notifyObservers(): void {
+        this.observers.forEach(observer => observer.update(this.state));
     }
 }
+
+const game = new Game();
+const player1 = new Player("Người chơi 1");
+const player2 = new Player("Người chơi 2");
+
+game.addObserver(player1);
+game.addObserver(player2);
+
+game.setState("đang chơi"); 
 ```
 ## 2. Singleton
 ### Ví dụ cụ thể: Quản lý game
@@ -196,7 +197,7 @@ inputHandler.pressKey('Space');
 ```
 ## 4. Flyweight
 ### Ví dụ cụ thể: Quản lý đạn
-- **Mô tả**: Sử dụng mẫu Flyweight để quản lý các đối tượng đạn, tiết kiệm bộ nhớ khi có nhiều đạn giống nhau.
+- **Mô tả**: Sử dụng mẫu `Flyweight` để quản lý các đối tượng đạn, tiết kiệm bộ nhớ khi có nhiều đạn giống nhau.
 - **Cách thực hiện**:
 
 ```typescript
@@ -230,7 +231,7 @@ bullet1.shoot();
 const bullet2 = bulletFactory.getBullet('explosive');
 bullet2.shoot(); 
 ```
-## 6. State
+## 5. State
 ### Ví dụ cụ thể: Quản lý trạng thái nhân vật
 - **Mô tả**: Quản lý các trạng thái khác nhau của nhân vật trong game.
 - **Cách thực hiện**:
@@ -299,56 +300,25 @@ const character = new Character();
 character.move(); 
 character.shoot(); 
 ```
-## Observer
-### Ví dụ cụ thể: Quản lý sự kiện của người chơi
+## 6. Prototype
+### Ví dụ cụ thể: Tạo nhân vật
 - **Mô tả**: Theo dõi và thông báo cho các đối tượng khác khi trạng thái của người chơi thay đổi.
 - **Cách thực hiện**:
 
 ```typescript
-interface Observer {
-    update(state: string): void;
-}
+class CharacterPrototype {
+    constructor(public name: string, public health: number) {}
 
-class Player implements Observer {
-    private name: string;
-
-    constructor(name: string) {
-        this.name = name;
-    }
-
-    public update(state: string): void {
-        console.log(`${this.name} nhận được thông báo: Trạng thái người chơi thay đổi thành "${state}".`);
+    public clone(): CharacterPrototype {
+        return new CharacterPrototype(this.name, this.health);
     }
 }
 
-class Game {
-    private observers: Observer[] = [];
-    private state: string;
+// Sử dụng Prototype
+const baseCharacter = new CharacterPrototype("Hero", 100);
+const clonedCharacter = baseCharacter.clone();
 
-    public addObserver(observer: Observer): void {
-        this.observers.push(observer);
-    }
+console.log(clonedCharacter.name); // Hero
+console.log(clonedCharacter.health); // 100
 
-    public removeObserver(observer: Observer): void {
-        this.observers = this.observers.filter(obs => obs !== observer);
-    }
-
-    public setState(state: string): void {
-        this.state = state;
-        this.notifyObservers();
-    }
-
-    private notifyObservers(): void {
-        this.observers.forEach(observer => observer.update(this.state));
-    }
-}
-
-const game = new Game();
-const player1 = new Player("Người chơi 1");
-const player2 = new Player("Người chơi 2");
-
-game.addObserver(player1);
-game.addObserver(player2);
-
-game.setState("đang chơi"); 
 ```

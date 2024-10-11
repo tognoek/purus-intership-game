@@ -20,8 +20,11 @@
     "ws": "^8.18.0"
   },
   "dependencies": {
+    "@types/uuid": "^10.0.0",
     "ammo.js": "^0.0.10",
     "ammojs-typed": "github:giniedp/ammojs-typed",
-    "playcanvas": "^2.0.0"
+    "dotenv": "^16.4.5",
+    "playcanvas": "^2.0.0",
+    "uuid": "^10.0.0"
   }
 }

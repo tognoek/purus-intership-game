@@ -1,8 +1,8 @@
 import Ammo from 'ammojs-typed';
 
 export default class PhysicsWorld {
-    private dynamicsWorld: any;
-    private ammo: any;
+    private dynamicsWorld!: Ammo.btDiscreteDynamicsWorld;
+    private ammo!: typeof Ammo;
 
     constructor() {
         this.init();
@@ -25,11 +25,11 @@ export default class PhysicsWorld {
         this.dynamicsWorld.setGravity(new this.ammo.btVector3(0, -10, 0));
     }
 
-    public addRigidBody(rigidBody: any) {
+    public addRigidBody(rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.addRigidBody(rigidBody);
     }
 
-    public removeRigidBody(rigidBody: any) {
+    public removeRigidBody(rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.removeRigidBody(rigidBody);
     }
 

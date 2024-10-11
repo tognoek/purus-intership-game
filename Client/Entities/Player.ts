@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-import Entity from "./enity";
+import Entity from "./Enity";
 
 export default class Player extends Entity{
     private name: string;
