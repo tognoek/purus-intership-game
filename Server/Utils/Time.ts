@@ -8,6 +8,6 @@ export function getFormattedTime(): string {
     const minutes = String(now.getMinutes()).padStart(2, '0'); 
     const seconds = String(now.getSeconds()).padStart(2, '0'); 
     
-    return `[${seconds}:${minutes}:${hours}]-[${day}:${month}:${year}]`;
+    return `[${hours}:${minutes}:${seconds}]-[${day}:${month}:${year}]`;
 }
 

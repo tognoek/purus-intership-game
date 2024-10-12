@@ -6,11 +6,11 @@ export default class Models{
     private size: { x: number; y: number; z: number };
     private mass: number;
     private ammo!: typeof Ammo;
-    constructor() {
+
+    private constructor() {
         this.position = {x: 0, y: 0, z: 0};
         this.size = {x: 0, y: 0, z: 0};
         this.mass = 1;
-        this.init();
     }
     public static getInstance(): Models {
         if (!Models.instance) {
@@ -19,11 +19,11 @@ export default class Models{
         return Models.instance;
     }
 
-    async init(){
+    public async init(){
         this.ammo = await Ammo();
     }
 
-    getInfo(position: { x: number; y: number; z: number }, size: { x: number; y: number; z: number }, mass: number = 1){
+    public setInfo(position: { x: number; y: number; z: number }, size: { x: number; y: number; z: number }, mass: number = 1){
         this.position = position;
         this.size = size;
         this.mass = mass;

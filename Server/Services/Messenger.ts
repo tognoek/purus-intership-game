@@ -1,9 +1,11 @@
 export default class Messenger {
     private id: number;
     private data: object;
+    private idUser: string | null;
     constructor(id: number, data: object = {}) {
         this.id = id;
         this.data = data;
+        this.idUser = null;
     }
     public getId(): number {
         return this.id;
@@ -11,8 +13,14 @@ export default class Messenger {
     public getData(): object {
         return this.data;
     }
+    public setUser(id: string | undefined) {
+        this.idUser = id ?? null;
+    }
+    public getUser() {
+        return this.idUser;
+    }
     public toString(): string {
-        return `id: ${this.id}, Data: ${JSON.stringify(this.data)}`;
+        return `id: ${this.id}, data: ${JSON.stringify(this.data)}`;
     }
     public static fromString(str: string): Messenger | null {
         const parts = str.split(', data: ');

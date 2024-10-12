@@ -2,7 +2,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getFormattedTime } from '../Utils/time';
+import { getFormattedTime } from '../Utils/Time';
 import IHandlerMessenger from '../Services/IHandlerMessenger';
 import HandlerMessenger from '../Services/HandlerMessenger';
 import Messenger from '../Services/Messenger';
@@ -89,7 +89,7 @@ export default class Server {
     }
 
     private handleMessage(ws: WebSocket, message: WebSocket.Data) {
-        console.log('Received:', Messenger.fromString(message.toString()));
+        // console.log('Received:', Messenger.fromString(message.toString()));
         this.handlerMessenger.onMessage(
             ws,
             Messenger.fromString(message.toString())

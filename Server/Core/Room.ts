@@ -12,6 +12,15 @@ export default class Room{
         this.players.add(player);
     }
 
+    public isPlayer(idPlayer: string): boolean{
+        this.players.forEach(player => {
+            if (player.getId() == idPlayer){
+                return true;
+            }
+        })
+        return false;
+    }
+
     public getPlayer(): Set<Player>{
         return this.players;
     }

@@ -7,12 +7,12 @@ export default class Session {
     private static instance: Session;
     private rooms: Rooms;
     private players: Map<string, Player>;
-    private wolrds: Set<World>;
+    private wolrds: Map<string, World>;
 
     private constructor() {
         this.rooms = new Rooms();
         this.players = new Map();
-        this.wolrds = new Set();
+        this.wolrds = new Map();
     }
 
     public static getInstance(): Session {
@@ -26,22 +26,39 @@ export default class Session {
         return this.players;
     }
 
-    public addPlayerRoom(idRoom: string, player: Player) {
-        this.players.set(player.getId(), player);
-        this.rooms.addPlayer(idRoom, player);
+    public getidRoomByIdPlayer(idPlayer: string | null): string | null{
+        if (!idPlayer){
+            return null;
+        }
+        return this.rooms.getIdRoomByIdPlayer(idPlayer);
     }
 
     public addPlayer(player: Player) {
+        if (this.players.get(player.getId())){
+            return;
+        }
         this.players.set(player.getId(), player);
     }
 
     public newRoom(idRoom: string) {
         this.rooms.newRoom(idRoom);
-        this.wolrds.add(new World(idRoom));
+        this.wolrds.set(idRoom, new World(idRoom));
     }
 
-    public joinRoom(idRoom: string, idPlayer: string) {
-        this.rooms.addPlayer(idRoom, this.players.get(idPlayer));
+    public joinRoom(idRoom: string | undefined, idPlayer: string | null) {
+        if (!idPlayer || !idRoom){
+            console.log('input is null')
+            return;
+        }
+        let player = this.players.get(idPlayer);
+        if (!player){
+            console.log('player is null');
+            return;
+        }
+        if (!this.rooms.addPlayer(idRoom, player)){
+            this.wolrds.set(idRoom, new World(idRoom));
+        }
+        this.wolrds.get(idRoom)?.addPlayer(player.getId());
     }
 
     public removePlayer(idPlayer: string) {
@@ -51,6 +68,12 @@ export default class Session {
 
     public leaveRoom(idPlayer: string) {
         this.rooms.removePlayer(idPlayer);
+    }
+
+    public update(){
+        this.wolrds.forEach(wolrd => {
+
+        })
     }
 
     public reset() {

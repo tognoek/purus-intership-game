@@ -19,6 +19,13 @@ window.onresize = () => app.resizeCanvas();
 
     socket.onmessage = (data: MessageEvent) => {
         console.log(data.data);
+        console.log(Messenger.fromString(data.data));
+        switch (Messenger.fromString(data.data)?.getId()) {
+            case 1:
+                // box.rigidbody?.applyForce(new pc.Vec3(0, 0, 10))
+                box.setPosition(box.getPosition().x + 0.05, 5, 0);
+                break;
+        }
     };
 
     pc.WasmModule.setConfig('Ammo', {
@@ -110,18 +117,18 @@ window.onresize = () => app.resizeCanvas();
     box.addComponent('model', {
         type: 'box',
     });
-    
+
     box.setPosition(0, 5, 0);
 
     // Tạo thành phần Collision và RigidBody cho hộp
-    box.addComponent('collision', {
-        type: 'box',
-        halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
-    });
-    box.addComponent('rigidbody', {
-        type: 'dynamic',
-        mass: 1,
-    });
+    // box.addComponent('collision', {
+    //     type: 'box',
+    //     halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
+    // });
+    // box.addComponent('rigidbody', {
+    //     type: 'dynamic',
+    //     mass: 1,
+    // });
 
     // Thêm hộp vào cảnh
     app.root.addChild(box);
@@ -179,30 +186,70 @@ window.onresize = () => app.resizeCanvas();
         switch (event.key) {
             case 'y':
                 socket.send(
-                    new Messenger(-221, {
-                        a: 'Xin chao',
-                        b: 1,
-                        c: [1, 2, 3],
-                        d: { ll: 23 },
+                    new Messenger(1, {
+                        idRoom: '1143',
                     }).toString()
                 );
-                console.log(new Messenger(1, { a: 'Xin chao' }));
+                break;
+            case 't':
+                socket.send(
+                    new Messenger(1, {
+                        data: 'null',
+                    }).toString()
+                );
                 break;
             case 'w':
             case 'W':
-                force.set(0, 0, -forceMagnitude); // Lực lên trên
+                socket.send(
+                    new Messenger(11, {
+                        force: {
+                            x: 0,
+                            y: 0,
+                            z: -forceMagnitude,
+                        },
+                    }).toString()
+                );
+                // force.set(0, 0, -forceMagnitude); // Lực lên trên
                 break;
             case 's':
             case 'S':
+                socket.send(
+                    new Messenger(12, {
+                        force: {
+                            x: 0,
+                            y: 0,
+                            z: forceMagnitude,
+                        },
+                    }).toString()
+                );
                 force.set(0, 0, forceMagnitude); // Lực xuống dưới
                 break;
             case 'a':
             case 'A':
+                socket.send(
+                    new Messenger(13, {
+                        force: {
+                            x: -forceMagnitude,
+                            y: 0,
+                            z: 0,
+                        },
+                    }).toString()
+                );
                 force.set(-forceMagnitude, 0, 0); // Lực sang trái
                 break;
             case 'd':
             case 'D':
-                force.set(forceMagnitude, 0, 0); // Lực sang phải
+                socket.send(
+                    new Messenger(14, {
+                        force: {
+                            x: forceMagnitude,
+                            y: 0,
+                            z: 0,
+                        },
+                    }).toString()
+                );
+                // force.set(forceMagnitude, 0, 0); // Lực sang phải
+                // box.rigidbody?.teleport(10, 0, 0);
                 break;
             default:
                 return; // Không làm gì nếu phím không hợp lệ

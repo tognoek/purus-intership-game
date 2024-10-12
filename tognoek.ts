@@ -1,1 +1,2 @@
-console.log(123)
+let a = {a : 2}
+console.log(typeof a)

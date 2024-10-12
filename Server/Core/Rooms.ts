@@ -1,27 +1,29 @@
 import Player from '../Entities/Player';
 import Room from './Room';
-import { v4 as uuidv4 } from 'uuid';
 
 export default class Rooms {
-    private rooms: Map<string, Room>;
+    private rooms: Set<Room>;
     constructor() {
-        this.rooms = new Map();
+        this.rooms = new Set();
     }
     public newRoom(id: string) {
-        this.rooms.set(uuidv4(), new Room(id));
+        this.rooms.add(new Room(id));
     }
 
     public removeRoom(idRoom: string){
-        for (const room of this.rooms){
-            if (room[1].getId() == idRoom){
-                this.rooms.delete(room[0]);
-                return;
+        let temp: Room | null = null;
+        this.rooms.forEach(room => {
+            if (room.getId() == idRoom){
+                temp = room;
             }
+        })
+        if (temp){
+            this.rooms.delete(temp);
         }
     }
 
     public getPlayers(id: string): Set<Player> | null {
-        this.rooms.forEach((room) => {
+        this.rooms.forEach(room => {
             if (room.getId() == id) {
                 return room.getPlayer();
             }
@@ -29,27 +31,36 @@ export default class Rooms {
         return null;
     }
 
-    public getRoom(id: string): Room | undefined {
+    public getIdRoomByIdPlayer(idPlayer: string): string | null{
         this.rooms.forEach(room => {
-            if (room.getId() == id){
-                return room;
+            if (room.isPlayer(idPlayer)){
+                return room.getId();
             }
         })
-        return undefined;
+        return null;
     }
 
-    public addPlayer(id: string, player: Player | undefined){
-        if (!player){
-            return;
-        }
+    public getRoom(id: string): Room | null {
+        let result: Room | null = null;
+        this.rooms.forEach(room => {
+            if (room.getId() == id){
+                result = room;
+                return;
+            }
+        })
+        return result;
+    }
+
+    public addPlayer(id: string, player: Player): boolean{
         this.rooms.forEach((room) => {
             if (room.getId() == id) {
                 room.addPlayer(player);
-                return;
+                return true;
             }
         });
         this.newRoom(id);
         this.getRoom(id)?.addPlayer(player);
+        return false
     }
 
     public removePlayer(idPlayer: string){
@@ -62,16 +73,16 @@ export default class Rooms {
     }
 
     public clear(): void {
-        const keysToDelete: string[] = [];
+        const Rommdelete: Room[] = [];
 
-        this.rooms.forEach((room, key) => {
+        this.rooms.forEach(room => {
             if (room.countPlayer() === 0) {
-                keysToDelete.push(key);
+                Rommdelete.push(room);
             }
         });
 
-        keysToDelete.forEach((key) => {
-            this.rooms.delete(key);
+        Rommdelete.forEach((room) => {
+            this.rooms.delete(room);
         });
     }
 }
