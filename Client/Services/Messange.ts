@@ -1,4 +1,4 @@
-export default class Messenger {
+export default class Messange {
     private id: number;
     private data: object;
     constructor(id: number, data: object = {}) {
@@ -14,7 +14,7 @@ export default class Messenger {
     public toString(): string {
         return `id: ${this.id}, data: ${JSON.stringify(this.data)}`;
     }
-    public static fromString(str: string): Messenger | null {
+    public static fromString(str: string): Messange | null {
         const parts = str.split(', data: ');
 
         if (parts.length === 2) {
@@ -23,7 +23,7 @@ export default class Messenger {
             const id = parseInt(idPart);
             const data = JSON.parse(dataPart);
 
-            return new Messenger(id, data);
+            return new Messange(id, data);
         }
 
         return null;

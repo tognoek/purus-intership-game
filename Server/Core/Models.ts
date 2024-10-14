@@ -1,4 +1,5 @@
 import Ammo from "ammojs-typed";
+import Session from "./Session";
 
 export default class Models{
     private static instance: Models;
@@ -11,16 +12,13 @@ export default class Models{
         this.position = {x: 0, y: 0, z: 0};
         this.size = {x: 0, y: 0, z: 0};
         this.mass = 1;
+        this.ammo = Session.getInstance().getAmmo();
     }
     public static getInstance(): Models {
         if (!Models.instance) {
             Models.instance = new Models();
         }
         return Models.instance;
-    }
-
-    public async init(){
-        this.ammo = await Ammo();
     }
 
     public setInfo(position: { x: number; y: number; z: number }, size: { x: number; y: number; z: number }, mass: number = 1){
@@ -48,7 +46,6 @@ export default class Models{
         // Tạo RigidBody
         const rigidBodyInfo = new this.ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, localInertia);
         const rigidBody = new this.ammo.btRigidBody(rigidBodyInfo);
-
         return rigidBody;
     }
 }

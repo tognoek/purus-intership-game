@@ -1,18 +1,19 @@
 import Rooms from './Rooms';
 import Player from '../Entities/Player';
 import World from './World';
-
+import Ammo from 'ammojs-typed';
 
 export default class Session {
     private static instance: Session;
     private rooms: Rooms;
     private players: Map<string, Player>;
-    private wolrds: Map<string, World>;
+    private worlds: Map<string, World>;
+    private ammo!: typeof Ammo;
 
     private constructor() {
         this.rooms = new Rooms();
         this.players = new Map();
-        this.wolrds = new Map();
+        this.worlds = new Map();
     }
 
     public static getInstance(): Session {
@@ -22,58 +23,91 @@ export default class Session {
         return Session.instance;
     }
 
-    public getPlayers(): Map<string, Player>{
-        return this.players;
+    public async init() {
+        this.ammo = await Ammo();
     }
 
-    public getidRoomByIdPlayer(idPlayer: string | null): string | null{
-        if (!idPlayer){
-            return null;
-        }
-        return this.rooms.getIdRoomByIdPlayer(idPlayer);
+    public getAmmo(){
+        return this.ammo;
     }
 
     public addPlayer(player: Player) {
-        if (this.players.get(player.getId())){
+        if (this.players.get(player.getId())) {
             return;
         }
         this.players.set(player.getId(), player);
     }
-
-    public newRoom(idRoom: string) {
-        this.rooms.newRoom(idRoom);
-        this.wolrds.set(idRoom, new World(idRoom));
+    public leaveRoom(idPlayer: string) {
+        this.rooms.removePlayer(idPlayer);
+        let idRomm = this.rooms.getIdRoomByIdPlayer(idPlayer);
+        if (!idRomm) {
+            return;
+        }
+        this.worlds.get(idRomm)?.removePlayer(idPlayer);
     }
 
     public joinRoom(idRoom: string | undefined, idPlayer: string | null) {
-        if (!idPlayer || !idRoom){
-            console.log('input is null')
+        if (!idPlayer || !idRoom) {
+            console.log('input is null');
             return;
         }
         let player = this.players.get(idPlayer);
-        if (!player){
+        if (!player) {
             console.log('player is null');
             return;
         }
-        if (!this.rooms.addPlayer(idRoom, player)){
-            this.wolrds.set(idRoom, new World(idRoom));
+        if (!this.rooms.addPlayer(idRoom, player)) {
+            console.log('new room');
+            this.worlds.set(idRoom, new World(idRoom));
         }
-        this.wolrds.get(idRoom)?.addPlayer(player.getId());
+        this.worlds.get(idRoom)?.addPlayer(player.getId());
     }
 
     public removePlayer(idPlayer: string) {
         this.players.delete(idPlayer);
         this.rooms.removePlayer(idPlayer);
+        let idRomm = this.rooms.getIdRoomByIdPlayer(idPlayer);
+        if (!idRomm) {
+            return;
+        }
+        this.worlds.get(idRomm)?.removePlayer(idPlayer);
     }
 
-    public leaveRoom(idPlayer: string) {
-        this.rooms.removePlayer(idPlayer);
+    public getPlayers(): Map<string, Player> {
+        return this.players;
     }
 
-    public update(){
-        this.wolrds.forEach(wolrd => {
+    public getidRoomByIdPlayer(idPlayer: string | null): string | null {
+        if (!idPlayer) {
+            return null;
+        }
+        return this.rooms.getIdRoomByIdPlayer(idPlayer);
+    }
+    public newRoom(idRoom: string) {
+        this.rooms.newRoom(idRoom);
+        this.worlds.set(idRoom, new World(idRoom));
+    }
 
-        })
+    public update() {
+        this.worlds.forEach((world) => {
+            world.update(null);
+        });
+    }
+
+    // World
+    public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
+        let idRoom = this.getidRoomByIdPlayer(idPlayer);
+        if (idRoom) {
+            this.worlds.get(idRoom)?.applyForce(idPlayer, force);
+        }
+    }
+
+    public getPosition(): Record<string, Record<string, { x: number; y: number; z: number }>> {
+        let result: Record<string, Record<string, { x: number; y: number; z: number }>> = {};
+        this.worlds.forEach((world, id) => {
+            result[id] = world.getData();
+        });
+        return result;
     }
 
     public reset() {

@@ -10,72 +10,80 @@ export default class Rooms {
         this.rooms.add(new Room(id));
     }
 
-    public removeRoom(idRoom: string){
+    public removeRoom(idRoom: string) {
         let temp: Room | null = null;
-        this.rooms.forEach(room => {
-            if (room.getId() == idRoom){
+        this.rooms.forEach((room) => {
+            if (room.getId() == idRoom) {
                 temp = room;
             }
-        })
-        if (temp){
+        });
+        if (temp) {
             this.rooms.delete(temp);
         }
     }
 
     public getPlayers(id: string): Set<Player> | null {
-        this.rooms.forEach(room => {
+        let result: Set<Player> | null = null;
+        this.rooms.forEach((room) => {
             if (room.getId() == id) {
-                return room.getPlayer();
+                result = room.getPlayer();
+                return;
             }
         });
-        return null;
+        return result;
     }
 
-    public getIdRoomByIdPlayer(idPlayer: string): string | null{
-        this.rooms.forEach(room => {
-            if (room.isPlayer(idPlayer)){
-                return room.getId();
+    public getIdRoomByIdPlayer(idPlayer: string): string | null {
+        let result: string | null = null;
+        this.rooms.forEach((room) => {
+            if (room.isPlayer(idPlayer)) {
+                result = room.getId();
+                return;
             }
-        })
-        return null;
+        });
+        return result;
     }
 
     public getRoom(id: string): Room | null {
         let result: Room | null = null;
-        this.rooms.forEach(room => {
-            if (room.getId() == id){
+        this.rooms.forEach((room) => {
+            if (room.getId() == id) {
                 result = room;
                 return;
             }
-        })
+        });
         return result;
     }
 
-    public addPlayer(id: string, player: Player): boolean{
+    public addPlayer(id: string, player: Player): boolean {
+        let result: boolean = false;
         this.rooms.forEach((room) => {
             if (room.getId() == id) {
                 room.addPlayer(player);
-                return true;
+                result = true;
+                return;
             }
         });
-        this.newRoom(id);
-        this.getRoom(id)?.addPlayer(player);
-        return false
+        if (!result) {
+            this.newRoom(id);
+            this.getRoom(id)?.addPlayer(player);
+        }
+        return result;
     }
 
-    public removePlayer(idPlayer: string){
-        this.rooms.forEach(room => {
-            if (room.removePlayer(idPlayer)){
+    public removePlayer(idPlayer: string) {
+        this.rooms.forEach((room) => {
+            if (room.removePlayer(idPlayer)) {
                 this.clear();
                 return;
-            };
-        })
+            }
+        });
     }
 
     public clear(): void {
         const Rommdelete: Room[] = [];
 
-        this.rooms.forEach(room => {
+        this.rooms.forEach((room) => {
             if (room.countPlayer() === 0) {
                 Rommdelete.push(room);
             }

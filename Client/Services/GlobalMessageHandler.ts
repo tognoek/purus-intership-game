@@ -1,26 +1,57 @@
-import IMessageHandler from "./IMessageHandler";
-import Messenge from "./Messenger";
+import { MessageEvent } from 'ws';
+import IMessageHandler from './IMessageHandler';
+import Messange from './Messange';
+import Session from './Session';
+import ReadMessenge from './ReadMessege';
 
 // handle messages from the server
 
-export default class GlobalMessengeHandeler implements IMessageHandler{
+export default class GlobalMessengeHandeler implements IMessageHandler {
     private static instance: GlobalMessengeHandeler;
-    public static getInstance(): GlobalMessengeHandeler{
-        if(!GlobalMessengeHandeler.instance){
+    private socket: WebSocket | null;
+    private readMessenger: ReadMessenge;
+
+    constructor() {
+        this.readMessenger = new ReadMessenge();
+        this.socket = null;
+    }
+
+    public static getInstance(): GlobalMessengeHandeler {
+        if (!GlobalMessengeHandeler.instance) {
             GlobalMessengeHandeler.instance = new GlobalMessengeHandeler();
         }
         return GlobalMessengeHandeler.instance;
     }
     onConnectOK(): void {
-        throw new Error("Method not implemented.");
+        console.log('Connected to server successfully');
     }
     onConnectionFail(): void {
-        throw new Error("Method not implemented.");
+        // throw new Error("Method not implemented.");
     }
     onDisconnected(): void {
-        throw new Error("Method not implemented.");
+        console.log('Close connection to server');
     }
-    onMessage(msg: Messenge): void {
-        throw new Error("Method not implemented.");
+    onMessage(data: any): void {
+        if (this.socket) {
+            let msg = Messange.fromString(data);
+            // console.log(msg)
+            let realData = msg?.getData();
+            if (realData) {
+                switch (msg?.getId()) {
+                    case 1:
+                        this.readMessenger.setIdUser(realData);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        } else {
+            console.log('Connection erro');
+        }
+    }
+
+    public setSocket(socket: WebSocket) {
+        this.socket = socket;
     }
 }

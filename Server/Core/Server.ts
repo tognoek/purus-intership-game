@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 
 import { getFormattedTime } from '../Utils/Time';
-import IHandlerMessenger from '../Services/IHandlerMessenger';
 import HandlerMessenger from '../Services/HandlerMessenger';
 import Messenger from '../Services/Messenger';
 
@@ -11,11 +10,12 @@ dotenv.config();
 
 export default class Server {
     private wss: WebSocketServer;
-    private port: number = process.env.PORT ? parseInt(process.env.PORT) : 1582;
+    private port: number;
     private clients: Map<WebSocket, string>;
-    private handlerMessenger: IHandlerMessenger;
+    private handlerMessenger: HandlerMessenger;
 
     constructor() {
+        this.port = process.env.PORT ? parseInt(process.env.PORT) : 1582;
         this.wss = new WebSocketServer({ port: this.port });
         this.clients = new Map();
         this.handlerMessenger = new HandlerMessenger(this.clients);
@@ -37,18 +37,14 @@ export default class Server {
 
         this.clients.forEach((clientId, ws) => {
             ws.close();
-            console.log(
-                `Closed connection to client: ${clientId} | time: ${getFormattedTime()}`
-            );
+            console.log(`Closed connection to client: ${clientId} | time: ${getFormattedTime()}`);
         });
         this.removeListeners();
         this.clients.clear();
     }
 
     public reset() {
-        console.log(
-            `Resetting WebSocket server... | time: ${getFormattedTime()}`
-        );
+        console.log(`Resetting WebSocket server... | time: ${getFormattedTime()}`);
 
         this.close();
 
@@ -64,7 +60,7 @@ export default class Server {
         this.setupListeners();
     }
 
-    private removeListeners(){
+    private removeListeners() {
         this.wss.on('connection', () => {});
     }
 
@@ -76,40 +72,34 @@ export default class Server {
     }
 
     private handleConnection(ws: WebSocket) {
-        console.log(
-            `New player connected: ${getFormattedTime()}, id: ${this.clients.get(
-                ws
-            )}`
-        );
-        this.handlerMessenger.onConnect(this.clients.get(ws) ?? null);
-        ws.on('message', (message: WebSocket.Data) =>
-            this.handleMessage(ws, message)
-        );
+        const clientId = this.clients.get(ws);
+        if (!clientId) {
+            return;
+        }
+        console.log(`New player connected: ${getFormattedTime()}, id: ${clientId}`);
+        this.handlerMessenger.onSendIdUser(ws);
+        this.handlerMessenger.onConnect(clientId ?? null);
+        ws.on('message', (message: WebSocket.Data) => this.handleMessage(ws, message));
         ws.on('close', () => this.handleDisconnect(ws));
     }
 
     private handleMessage(ws: WebSocket, message: WebSocket.Data) {
         // console.log('Received:', Messenger.fromString(message.toString()));
-        this.handlerMessenger.onMessage(
-            ws,
-            Messenger.fromString(message.toString())
-        );
+        this.handlerMessenger.onMessage(ws, Messenger.fromString(message.toString()));
     }
 
     private handleDisconnect(ws: WebSocket) {
-        const clientId = this.clients.get(ws);
-        if (clientId) {
-            this.clients.delete(ws);
-            console.log(
-                `Player with id: ${clientId}  disconnected: ${getFormattedTime()}`
-            );
-        }
+        this.handlerMessenger.onDisconnect(ws);
     }
 
-    public sendMsgAll(messenge: string){
+    public sendData() {
+        this.handlerMessenger.sendData();
+    }
+
+    public sendMsgAll(messenge: string) {
         this.clients.forEach((idClient, wsClient) => {
             if (wsClient.readyState === WebSocket.OPEN) {
-                wsClient.send(new Messenger(-28, {msg: messenge}).toString());
+                wsClient.send(new Messenger(-28, { msg: messenge }).toString());
             }
         });
     }

@@ -1,8 +1,8 @@
-import Messenge from "./Messenger";
+import { MessageEvent } from "ws";
 
 export default interface IMessageHandler{
     onConnectOK(): void;
     onConnectionFail(): void;
     onDisconnected(): void;
-    onMessage(msg: Messenge): void;
+    onMessage(msg: any): void;
 }

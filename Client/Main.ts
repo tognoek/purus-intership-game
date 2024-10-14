@@ -1,6 +1,25 @@
 import * as pc from 'playcanvas';
-import Messenger from './Services/Messenger';
 
+import Messange from './Services/Messange';
+import GameManager from './Core/Game';
+
+
+var idRomm = 4040;
+
+const setRoom = (id: number) =>{
+    idRomm = id;
+}
+document.getElementById("idRoom")?.addEventListener("click", () => {
+    const inputElement = document.getElementById("number") as HTMLInputElement;
+    const inputValue = parseInt(inputElement.value);
+
+    if (!isNaN(inputValue)) {
+        console.log(inputValue);
+        idRomm = inputValue;
+    } else {
+        
+    }
+});
 // Thiết lập canvas và ứng dụng
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
@@ -11,22 +30,52 @@ app.setCanvasResolution(pc.RESOLUTION_AUTO);
 window.onresize = () => app.resizeCanvas();
 
 (async () => {
-    const socket = new WebSocket('ws://192.168.1.9:5050'); // Thay địa chỉ IP của máy server
+    let idUser: string | null;
+    let arrayId: Array<string> = new Array();
+    let mapBox: Map<string, pc.Entity> = new Map();
+    const socket = new WebSocket('ws://192.168.0.93:5050'); // Thay địa chỉ IP của máy server
 
     socket.onopen = () => {
         console.log('Connected to server');
     };
 
     socket.onmessage = (data: MessageEvent) => {
-        console.log(data.data);
-        console.log(Messenger.fromString(data.data));
-        switch (Messenger.fromString(data.data)?.getId()) {
-            case 1:
-                // box.rigidbody?.applyForce(new pc.Vec3(0, 0, 10))
-                box.setPosition(box.getPosition().x + 0.05, 5, 0);
+        let messange: Messange | null = Messange.fromString(data.data);
+        if (!messange) {
+            return;
+        }
+        let dataReal: any;
+        switch (messange.getId()) {
+            case 300:
+                dataReal = messange.getData() as { [key: string]: { x: number; y: number; z: number } }; 
+                let key = Object.keys(dataReal);
+                key.forEach(item => {
+                    createBox(item);
+                    mapBox.get(item)?.setPosition(dataReal[item].x, dataReal[item].y, dataReal[item].z)
+                });
+                // box.setPosition(dataReal[key].x, dataReal[key].y, dataReal[key].z);
+                break;
+            case 0:
+                dataReal = messange.getData() as { [key: string]: string }; 
+                idUser = dataReal['id'];
+                console.log(idUser);
                 break;
         }
     };
+
+    const createBox = (id:string) => {
+        if (arrayId.indexOf(id) > -1){
+            return;
+        }
+        arrayId.push(id);
+        const box = new pc.Entity('Box');
+        box.setPosition(0, 5, 0);
+        app.root.addChild(box);
+        box.addComponent('model', {
+            type: 'box',
+        });
+        mapBox.set(id, box);
+    }
 
     pc.WasmModule.setConfig('Ammo', {
         glueUrl: './lib/ammo/ammo.wasm.js',
@@ -62,8 +111,8 @@ window.onresize = () => app.resizeCanvas();
 
     assetListLoader.load(() => {
         const characterEntity = new pc.Entity('Character');
-        app.root.addChild(characterEntity);
         characterEntity.setPosition(1, 3, 10);
+        app.root.addChild(characterEntity);
         characterEntity.addComponent('model', {
             type: 'asset',
             asset: assets.charModelAsset,
@@ -112,13 +161,13 @@ window.onresize = () => app.resizeCanvas();
     });
 
     // Tạo hộp
-    const box = new pc.Entity('Box');
-    app.root.addChild(box);
-    box.addComponent('model', {
-        type: 'box',
-    });
+    // const box = new pc.Entity('Box');
+    // box.setPosition(0, 5, 0);
+    // app.root.addChild(box);
+    // box.addComponent('model', {
+    //     type: 'box',
+    // });
 
-    box.setPosition(0, 5, 0);
 
     // Tạo thành phần Collision và RigidBody cho hộp
     // box.addComponent('collision', {
@@ -131,27 +180,27 @@ window.onresize = () => app.resizeCanvas();
     // });
 
     // Thêm hộp vào cảnh
-    app.root.addChild(box);
+    // app.root.addChild(box);
 
-    const box1 = new pc.Entity('Box');
-    app.root.addChild(box1);
-    box1.addComponent('model', {
-        type: 'box',
-    });
-    box1.setPosition(10, 5, 0);
+    // const box1 = new pc.Entity('Box');
+    // app.root.addChild(box1);
+    // box1.addComponent('model', {
+    //     type: 'box',
+    // });
+    // box1.setPosition(10, 5, 0);
 
-    // Tạo thành phần Collision và RigidBody cho hộp
-    box1.addComponent('collision', {
-        type: 'box',
-        halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
-    });
-    box1.addComponent('rigidbody', {
-        type: 'dynamic',
-        mass: 1,
-    });
+    // // Tạo thành phần Collision và RigidBody cho hộp
+    // box1.addComponent('collision', {
+    //     type: 'box',
+    //     halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
+    // });
+    // box1.addComponent('rigidbody', {
+    //     type: 'dynamic',
+    //     mass: 1,
+    // });
 
-    // Thêm hộp vào cảnh
-    app.root.addChild(box1);
+    // // Thêm hộp vào cảnh
+    // app.root.addChild(box1);
 
     // Thêm ánh sáng
     const light = new pc.Entity('Directional Light');
@@ -174,9 +223,9 @@ window.onresize = () => app.resizeCanvas();
 
     // Biến để lưu trữ tốc độ di chuyển
     const speed = 1;
-    box.collision?.on('collisionstart', (resolve) => {
-        console.log(resolve.other.name);
-    });
+    // box.collision?.on('collisionstart', (resolve) => {
+    //     console.log(resolve.other.name);
+    // });
 
     // Hàm xử lý sự kiện bàn phím
     const forceMagnitude = 100;
@@ -186,14 +235,14 @@ window.onresize = () => app.resizeCanvas();
         switch (event.key) {
             case 'y':
                 socket.send(
-                    new Messenger(1, {
-                        idRoom: '1143',
+                    new Messange(1, {
+                        idRoom: idRomm,
                     }).toString()
                 );
                 break;
             case 't':
                 socket.send(
-                    new Messenger(1, {
+                    new Messange(1, {
                         data: 'null',
                     }).toString()
                 );
@@ -201,7 +250,7 @@ window.onresize = () => app.resizeCanvas();
             case 'w':
             case 'W':
                 socket.send(
-                    new Messenger(11, {
+                    new Messange(11, {
                         force: {
                             x: 0,
                             y: 0,
@@ -214,7 +263,7 @@ window.onresize = () => app.resizeCanvas();
             case 's':
             case 'S':
                 socket.send(
-                    new Messenger(12, {
+                    new Messange(12, {
                         force: {
                             x: 0,
                             y: 0,
@@ -227,7 +276,7 @@ window.onresize = () => app.resizeCanvas();
             case 'a':
             case 'A':
                 socket.send(
-                    new Messenger(13, {
+                    new Messange(13, {
                         force: {
                             x: -forceMagnitude,
                             y: 0,
@@ -240,7 +289,7 @@ window.onresize = () => app.resizeCanvas();
             case 'd':
             case 'D':
                 socket.send(
-                    new Messenger(14, {
+                    new Messange(14, {
                         force: {
                             x: forceMagnitude,
                             y: 0,
@@ -256,7 +305,7 @@ window.onresize = () => app.resizeCanvas();
         }
 
         // Áp dụng lực vào hộp
-        box?.rigidbody?.applyForce(force);
+        // box?.rigidbody?.applyForce(force);
     };
 
     // Lắng nghe sự kiện keydown
