@@ -48,7 +48,7 @@ export default class NetWork {
 
     public onMessenger() {
         if (this.socket) {
-            console.log(123)
+            console.log('Connect')
             this.socket.onmessage = (data: MessageEvent) => {
                 GlobalMessengeHandeler.getInstance().onMessage(data.data);
             };
@@ -60,7 +60,13 @@ export default class NetWork {
     public handlerSend(message: Messange) {
         if (!this.socket) {
             console.error('Socket not connected');
+            return;
         }
-        this.socket?.send(message.toString());
+        // this.socket.send(message.toString());
+        if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(message.toString());
+        } else {
+            console.log('WebSocket is not open.');
+        }
     }
 }

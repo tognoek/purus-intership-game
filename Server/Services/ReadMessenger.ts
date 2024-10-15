@@ -13,7 +13,11 @@ export default class ReadMessenger {
         Session.getInstance().joinRoom(roomId, user || null);
     }
 
-    public aplyForce(idPlayer: string,force: { x: number, y: number, z: number }) {
+    public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
         Session.getInstance().applyForce(idPlayer, force);
+    }
+
+    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
+        Session.getInstance().applyVelocity(idPlayer, velocity);
     }
 }

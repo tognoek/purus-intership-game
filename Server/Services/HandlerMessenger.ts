@@ -52,24 +52,17 @@ export default class HandlerMessenger {
         switch (msg.getId()) {
             case 1: // Join Room
                 this.readMessenger.joinRoom(msg);
+                this.sendDataToPlayer(client, new Messenger(2, { name: 'Mage' }));
                 break;
             case 2: // Add Models
                 break;
-            case 11: // W
+            case 11: // Movent
                 data = msg.getData() as { force: { x: number; y: number; z: number } };
-                this.readMessenger.aplyForce(idPlayer, data.force);
+                this.readMessenger.applyForce(idPlayer, data.force);
                 break;
-            case 12: // S
-                data = msg.getData() as { force: { x: number; y: number; z: number } };
-                this.readMessenger.aplyForce(idPlayer, data.force);
-                break;
-            case 13: // A
-                data = msg.getData() as { force: { x: number; y: number; z: number } };
-                this.readMessenger.aplyForce(idPlayer, data.force);
-                break;
-            case 14: // D
-                data = msg.getData() as { force: { x: number; y: number; z: number } };
-                this.readMessenger.aplyForce(idPlayer, data.force);
+            case 12: // Movent
+                data = msg.getData() as { velocity: { x: number; y: number; z: number } };
+                this.readMessenger.applyVelocity(idPlayer, data.velocity);
                 break;
             default:
                 break;
@@ -103,6 +96,14 @@ export default class HandlerMessenger {
                 if (idRoom) {
                     ws.send(new Messenger(300, data[idRoom]).toString());
                 }
+            }
+        });
+    }
+
+    private sendDataToPlayer(client: WebSocket, msg: Messenger) {
+        this.clients.forEach((idClient, wsClient) => {
+            if (wsClient !== client && wsClient.readyState === WebSocket.OPEN) {
+                wsClient.send(msg.toString());
             }
         });
     }

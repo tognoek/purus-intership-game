@@ -302,7 +302,7 @@ character.shoot();
 ```
 ## 6. Prototype
 ### Ví dụ cụ thể: Tạo nhân vật
-- **Mô tả**: Theo dõi và thông báo cho các đối tượng khác khi trạng thái của người chơi thay đổi.
+- **Mô tả**: Chia sẻ tài nguyên giống nhau.
 - **Cách thực hiện**:
 
 ```typescript

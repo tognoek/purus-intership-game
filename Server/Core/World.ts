@@ -14,13 +14,10 @@ export default class World {
     }
 
     public addPlayer(idPlayer: string) {
-        Models.getInstance().setInfo({ x: 1, y: 4, z: 1 }, { x: 1, y: 1, z: 1 });
+        Models.getInstance().setInfo({ x: Math.random() * 4 - 8, y: 20, z: 1 }, { x: 1, y: 1, z: 1 });
         const rigidBody = Models.getInstance().createRigidBody();
-        Models.getInstance().setInfo({ x: 4, y: 4, z: 1 }, { x: 1, y: 1, z: 1 }, 1000);
-        const rigidBodyTwo = Models.getInstance().createRigidBody();
         this.players.push(idPlayer);
         this.physicWorld.addRigidBody(idPlayer, rigidBody);
-        this.physicWorld.addRigidBody('123123', rigidBodyTwo);
     }
 
     public removePlayer(idPlayer: string) {
@@ -31,13 +28,17 @@ export default class World {
         this.physicWorld.applyForce(idPlayer, force);
     }
 
+    public applyVelocity(idPlayer: string, velocity: {x: number, y: number, z: number}){
+        this.physicWorld.applyVelocity(idPlayer, velocity);
+    }
+
     public update(dt: number | null) {
         const timeStep = dt || 1 / 30;
         const maxSubSteps = 10;
         this.physicWorld.stepSimulation(timeStep, maxSubSteps);
     }
     private createGround() {
-        const size = { x: 50, y: 1, z: 50 };
+        const size = { x: 1150, y: 1, z: 1150 };
         const mass = 0;
         Models.getInstance().setInfo({ x: 0, y: -0.5, z: 0 }, size, mass);
         const groundRigidBody = Models.getInstance().createRigidBody();

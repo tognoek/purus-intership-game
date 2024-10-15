@@ -55,6 +55,7 @@ export default class PhysicsWorld {
                 const transform = new this.ammo.btTransform();
                 motionState.getWorldTransform(transform);
                 const origin = transform.getOrigin();
+                this.ammo.destroy(transform);
                 return {
                     x: origin.x(),
                     y: origin.y(),
@@ -67,11 +68,23 @@ export default class PhysicsWorld {
     public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
         const rigidBody = this.getRigidBodyById(idPlayer);
         if (rigidBody) {
-            if (!rigidBody.isActive()){
+            if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
             const ammoForce = new this.ammo.btVector3(force.x, force.y, force.z);
             rigidBody.applyCentralForce(ammoForce);
+            this.ammo.destroy(ammoForce);
+        }
+    }
+    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
+        const rigidBody = this.getRigidBodyById(idPlayer);
+        if (rigidBody) {
+            if (!rigidBody.isActive()) {
+                rigidBody.setActivationState(1);
+            }
+            const ammoVelocity = new this.ammo.btVector3(velocity.x, velocity.y, velocity.z);
+            rigidBody.setLinearVelocity(ammoVelocity);
+            this.ammo.destroy(ammoVelocity); 
         }
     }
     public stepSimulation(timeStep: number = 1 / 30, maxSubSteps: number = 10) {

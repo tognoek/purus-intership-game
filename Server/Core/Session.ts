@@ -57,7 +57,6 @@ export default class Session {
             return;
         }
         if (!this.rooms.addPlayer(idRoom, player)) {
-            console.log('new room');
             this.worlds.set(idRoom, new World(idRoom));
         }
         this.worlds.get(idRoom)?.addPlayer(player.getId());
@@ -65,12 +64,12 @@ export default class Session {
 
     public removePlayer(idPlayer: string) {
         this.players.delete(idPlayer);
-        this.rooms.removePlayer(idPlayer);
-        let idRomm = this.rooms.getIdRoomByIdPlayer(idPlayer);
-        if (!idRomm) {
+        let idRoom = this.rooms.getIdRoomByIdPlayer(idPlayer);
+        if (!idRoom) {
             return;
         }
-        this.worlds.get(idRomm)?.removePlayer(idPlayer);
+        this.worlds.get(idRoom)?.removePlayer(idPlayer);
+        this.rooms.removePlayer(idPlayer);
     }
 
     public getPlayers(): Map<string, Player> {
@@ -99,6 +98,13 @@ export default class Session {
         let idRoom = this.getidRoomByIdPlayer(idPlayer);
         if (idRoom) {
             this.worlds.get(idRoom)?.applyForce(idPlayer, force);
+        }
+    }
+
+    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
+        let idRoom = this.getidRoomByIdPlayer(idPlayer);
+        if (idRoom) {
+            this.worlds.get(idRoom)?.applyVelocity(idPlayer, velocity);
         }
     }
 

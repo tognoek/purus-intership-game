@@ -46,6 +46,11 @@ export default class Models{
         // Tạo RigidBody
         const rigidBodyInfo = new this.ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, localInertia);
         const rigidBody = new this.ammo.btRigidBody(rigidBodyInfo);
+        // this.ammo.destroy(shape);
+        // this.ammo.destroy(transform);
+        // this.ammo.destroy(motionState);
+        // this.ammo.destroy(localInertia);
+        // this.ammo.destroy(rigidBodyInfo);
         return rigidBody;
     }
 }

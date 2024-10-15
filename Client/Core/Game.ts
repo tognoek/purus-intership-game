@@ -1,32 +1,62 @@
-import { Camera } from "playcanvas";
-
+import * as pc from "playcanvas";
+import Camera from "../Entities/Camera";
+import Model from "../Entities/Model";
 import Player from "../Entities/Player";
-import Messange from "../Services/Messange";
 import Session from "../Services/Session";
-import CreateMessege from "../Script/CreateMessenge";
 
 export default class Game{
-    private camera: Camera;
     private players: Map<string, Player>;
     private status: string;
+    private models: Map<string, Model>;
 
     constructor(){
-        this.camera = new Camera();
+        this.models = new Map();
         this.players = new Map();
-        this.status = 'home';
-        window.addEventListener('keydown', this.controller);
+        this.status = 'play';
     }
 
-    controller(event: KeyboardEvent){
-        let message: Messange;
-        switch (event.key) {
-            case 'y':
-                message = CreateMessege.getInstance().joinRoom('1403');
-                break;
-            default:
-                message = new Messange(3105, {tognoek: '3105'});
-                break;
-        }
-        Session.getInstance().send(message);
+    public getStatus():string{
+        return this.status;
+    }
+    
+    public remove(id: string){
+        this.players.delete(id);
+        let enity = this.models.get(id);
+        this.models.delete(id);
+        enity?.destroy();
+    }
+
+    public setStatus(status: string){
+        this.status = status;
+    }
+
+    public addPlayer(player: Player){
+        this.players.set(player.getId(), player);
+    }
+
+    public getPlayers(): Map<string, Player>{
+        return this.players;
+    }
+
+    public isPlayer(id: string){
+        let result: boolean = false;
+        this.players.forEach(player => {
+            if (player.getId() == id){
+                result = true;
+            }
+        });
+        return result;
+    }       
+
+    public getPlayer(id: string){
+        return this.players.get(id);
+    }
+
+    public getModel(id: string){
+        return this.models.get(id);
+    }
+
+    public addModel(idPlayer: string, model: Model){
+        this.models.set(idPlayer, model);
     }
 }
