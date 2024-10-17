@@ -56,13 +56,13 @@ export default class HandlerMessenger {
                 break;
             case 2: // Add Models
                 break;
-            case 11: // Movent
-                data = msg.getData() as { force: { x: number; y: number; z: number } };
+            case 11: // Jump
+                data = msg.getData() as { force: { x: number; y: number; z: number }};
                 this.readMessenger.applyForce(idPlayer, data.force);
                 break;
             case 12: // Movent
-                data = msg.getData() as { velocity: { x: number; y: number; z: number } };
-                this.readMessenger.applyVelocity(idPlayer, data.velocity);
+                data = msg.getData() as { velocity: { x: number; y: number; z: number } , angle: number };
+                this.readMessenger.applyVelocity(idPlayer, data.velocity, data.angle);
                 break;
             default:
                 break;

@@ -2,7 +2,7 @@ import Game from '../Core/Game';
 import GameCanvas from '../Core/GameCanvas';
 import Camera from '../Entities/Camera';
 import NetWork from '../Entities/Network';
-import CreateModel from '../Script/CreateModle';
+import Player from '../Entities/Player';
 import { getLocalIP } from '../Utils/OperatingSystem';
 import ISession from './ISession';
 import Messange from './Messange';
@@ -49,6 +49,13 @@ export default class Session implements ISession {
 
     public getIdUser(): string | null {
         return this.idUser;
+    }
+
+    public getUser(): Player | undefined{
+        if (!this.idUser){
+            return undefined
+        }
+        return this.game.getPlayer(this.idUser);
     }
 
     public isConnected(): boolean {

@@ -17,7 +17,11 @@ export default class ReadMessenger {
         Session.getInstance().applyForce(idPlayer, force);
     }
 
-    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
-        Session.getInstance().applyVelocity(idPlayer, velocity);
+    public applyVelocity(
+        idPlayer: string,
+        velocity: { x: number; y: number; z: number },
+        angle: number
+    ) {
+        Session.getInstance().applyVelocity(idPlayer, velocity, angle);
     }
 }

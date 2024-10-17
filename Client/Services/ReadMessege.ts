@@ -16,25 +16,33 @@ export default class ReadMessenge {
 
     // public addModel
     public updateDataMap(data: object) {
-        let dataFormat = data as { [key: string]: { x: number; y: number; z: number } };
+        let dataFormat = data as {
+            [key: string]: { x: number; y: number; z: number;angle: number, status: string };
+        };
         let keys = Object.keys(dataFormat);
         // console.log(keys)
         keys.forEach((key) => {
-            let position = dataFormat[key];
+            let position = { x: dataFormat[key].x, y: dataFormat[key].y, z: dataFormat[key].z };
+            let status = dataFormat[key].status;
             if (Session.getInstance().game.isPlayer(key)) {
                 let model: Model | undefined;
                 model = Session.getInstance().game.getModel(key);
                 if (model) {
                     let player = Session.getInstance().game.getPlayer(key);
-                    let user = Session.getInstance().game.getPlayer(Session.getInstance().getIdUser() ?? 'tognoek')
+                    let user = Session.getInstance().game.getPlayer(
+                        Session.getInstance().getIdUser() ?? 'tognoek'
+                    );
                     model.setPosition(position);
+                    if (player?.setStatus(status)) {
+                        model.updateAnimation();
+                    }
+                    model.updateAngle(key,new pc.Vec3(position.x, position.y, position.z), dataFormat[key].angle)
                     player?.setPosition(position);
                     if (user) {
                         Session.getInstance().camera?.update(user.getPosition());
                     }
                 }
             } else {
-                console.log(position, key);
                 let entity = CreateModel.getInstance(null).createCharacter('mage', position);
                 Session.getInstance().game.addPlayer(
                     new Player(key, new pc.Vec3(position.x, position.y, position.z), key)

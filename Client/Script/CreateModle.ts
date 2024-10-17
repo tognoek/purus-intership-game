@@ -18,10 +18,16 @@ export default class CreateModel {
                 url: '../Assets/Textures/mage.png',
             }),
             Idle: new pc.Asset('idle', 'animation', {
-                url: '../Assets/Animations/idle.glb',
+                url: '../Assets/Animations/idle_nd.glb',
             }),
-            Wlak: new pc.Asset('walk', 'animation', {
+            Walk: new pc.Asset('walk', 'animation', {
                 url: '../Assets/Animations/walk.glb',
+            }),
+            Attack: new pc.Asset('attack', 'animation', {
+                url: '../Assets/Animations/attack.glb',
+            }),
+            Jump: new pc.Asset('jump', 'animation', {
+                url: '../Assets/Animations/jump.glb',
             }),
         };
 
@@ -60,7 +66,7 @@ export default class CreateModel {
             type: 'dynamic',
         });
         characterEntity.addComponent('animation', {
-            assets: [this.assets.Idle, this.assets.Wlak],
+            assets: [this.assets.Idle, this.assets.Walk, this.assets.Attack, this.assets.Jump],
         });
         characterEntity.setPosition(position.x, position.y, position.z);
         return characterEntity;

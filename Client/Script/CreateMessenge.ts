@@ -1,4 +1,5 @@
 import Messange from "../Services/Messange";
+import Session from "../Services/Session";
 
 export default class CreateMessege {
     private static instance: CreateMessege;
@@ -15,7 +16,7 @@ export default class CreateMessege {
     }
 
     public movent(x: number, y: number, z: number){
-        return new Messange(12, {velocity: {x : x, y: y, z: z}})
+        return new Messange(12, {velocity: {x : x, y: y, z: z}, angle: Session.getInstance().camera?.getAngle()})
     }
     public jump(x: number, y: number, z: number){
         return new Messange(11, {force: {x : x, y: y, z: z}})

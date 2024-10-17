@@ -5,8 +5,12 @@ export default class PhysicsWorld {
     private dynamicsWorld!: Ammo.btDiscreteDynamicsWorld;
     private ammo!: typeof Ammo;
     private rigidBodies: Map<string, Ammo.btRigidBody>;
+    private status: Map<string, string>;
+    private angles: Map<string, number>;
 
     constructor() {
+        this.status = new Map();
+        this.angles = new Map();
         this.rigidBodies = new Map();
         this.init();
     }
@@ -26,10 +30,53 @@ export default class PhysicsWorld {
 
         this.dynamicsWorld.setGravity(new this.ammo.btVector3(0, -10, 0));
     }
+    public getCollidingRigidBodies(idRigidBody: string): string[] {
+        const rigidBody = this.getRigidBodyById(idRigidBody);
+        const collidingIds: string[] = [];
+
+        if (!rigidBody) return collidingIds;
+        const aabb0 = new this.ammo.btVector3();
+        const aabb1 = new this.ammo.btVector3();
+
+        rigidBody.getAabb(aabb0, aabb1);
+
+        this.rigidBodies.forEach((body, id) => {
+            if (id !== idRigidBody) {
+                const aabb2 = new this.ammo.btVector3();
+                const aabb3 = new this.ammo.btVector3();
+                body.getAabb(aabb2, aabb3);
+
+                if (this.isAABBIntersect(aabb0, aabb1, aabb2, aabb3)) {
+                    collidingIds.push(id);
+                }
+            }
+        });
+
+        return collidingIds;
+    }
+
+    // Hàm kiểm tra va chạm giữa hai AABB
+    private isAABBIntersect(
+        aabb0Min: Ammo.btVector3,
+        aabb0Max: Ammo.btVector3,
+        aabb1Min: Ammo.btVector3,
+        aabb1Max: Ammo.btVector3
+    ): boolean {
+        return (
+            aabb0Min.x() <= aabb1Max.x() &&
+            aabb0Max.x() >= aabb1Min.x() &&
+            aabb0Min.y() <= aabb1Max.y() &&
+            aabb0Max.y() >= aabb1Min.y() &&
+            aabb0Min.z() <= aabb1Max.z() &&
+            aabb0Max.z() >= aabb1Min.z()
+        );
+    }
 
     public addRigidBody(idPlayer: string, rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.addRigidBody(rigidBody);
         this.rigidBodies.set(idPlayer, rigidBody);
+        this.status.set(idPlayer, 'idle');
+        this.angles.set(idPlayer, 180);
     }
 
     public removeRigidBody(idPlayer: string) {
@@ -47,7 +94,9 @@ export default class PhysicsWorld {
     public getRigiBodis(): Map<string, Ammo.btRigidBody> {
         return this.rigidBodies;
     }
-    public getRigidBodyPosition(id: string): { x: number; y: number; z: number } | null {
+    public getRigidBodyPosition(
+        id: string
+    ): { x: number; y: number; z: number; angle: number; status: string } | null {
         const rigidBody = this.getRigidBodyById(id);
         if (rigidBody) {
             const motionState = rigidBody.getMotionState();
@@ -56,10 +105,14 @@ export default class PhysicsWorld {
                 motionState.getWorldTransform(transform);
                 const origin = transform.getOrigin();
                 this.ammo.destroy(transform);
+                let status = this.status.get(id);
+                let angle = this.angles.get(id);
                 return {
                     x: origin.x(),
                     y: origin.y(),
                     z: origin.z(),
+                    angle: angle ?? 180,
+                    status: status ?? 'idle',
                 };
             }
         }
@@ -68,6 +121,12 @@ export default class PhysicsWorld {
     public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
         const rigidBody = this.getRigidBodyById(idPlayer);
         if (rigidBody) {
+            if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
+                return;
+            }
+            if (this.status.get(idPlayer) != 'jump') {
+                this.status.set(idPlayer, 'jump');
+            }
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
@@ -76,19 +135,55 @@ export default class PhysicsWorld {
             this.ammo.destroy(ammoForce);
         }
     }
-    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
+    public applyVelocity(
+        idPlayer: string,
+        velocity: { x: number; y: number; z: number },
+        angle: number
+    ) {
         const rigidBody = this.getRigidBodyById(idPlayer);
         if (rigidBody) {
+            if (this.status.get(idPlayer) != 'walk') {
+                this.status.set(idPlayer, 'walk');
+            }
+            if (velocity.x == 0 && velocity.y == 0 && velocity.z == 0) {
+                if (this.status.get(idPlayer) != 'idle') {
+                    this.status.set(idPlayer, 'idle');
+                }
+            }
+            if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
+                if (this.status.get(idPlayer) != 'jump') {
+                    this.status.set(idPlayer, 'jump');
+                }
+            }
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
-            const ammoVelocity = new this.ammo.btVector3(velocity.x, velocity.y, velocity.z);
+            this.angles.set(idPlayer, angle);
+            angle -= 180;
+            const angleInRadians = angle * (Math.PI / 180);
+
+            const rotatedVelocityX =
+                Math.cos(angleInRadians) * velocity.x - Math.sin(angleInRadians) * velocity.z;
+            const rotatedVelocityZ =
+                Math.sin(angleInRadians) * velocity.x + Math.cos(angleInRadians) * velocity.z;
+
+            const ammoVelocity = new this.ammo.btVector3(rotatedVelocityX, 0, rotatedVelocityZ);
             rigidBody.setLinearVelocity(ammoVelocity);
-            this.ammo.destroy(ammoVelocity); 
+            this.ammo.destroy(ammoVelocity);
         }
     }
+
     public stepSimulation(timeStep: number = 1 / 30, maxSubSteps: number = 10) {
         this.dynamicsWorld.stepSimulation(timeStep, maxSubSteps);
+        Session.getInstance()
+            .getPlayers()
+            .forEach((_, key) => {
+                if (this.getCollidingRigidBodies(key).includes('ground')) {
+                    if (this.status.get(key) == 'jump') {
+                        this.status.set(key, 'idle');
+                    }
+                }
+            });
     }
 
     public getDynamicsWorld() {

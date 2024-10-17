@@ -28,8 +28,8 @@ export default class World {
         this.physicWorld.applyForce(idPlayer, force);
     }
 
-    public applyVelocity(idPlayer: string, velocity: {x: number, y: number, z: number}){
-        this.physicWorld.applyVelocity(idPlayer, velocity);
+    public applyVelocity(idPlayer: string, velocity: {x: number, y: number, z: number}, angle: number){
+        this.physicWorld.applyVelocity(idPlayer, velocity, angle);
     }
 
     public update(dt: number | null) {

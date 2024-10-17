@@ -101,10 +101,10 @@ export default class Session {
         }
     }
 
-    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }) {
+    public applyVelocity(idPlayer: string, velocity: { x: number; y: number; z: number }, angle: number) {
         let idRoom = this.getidRoomByIdPlayer(idPlayer);
         if (idRoom) {
-            this.worlds.get(idRoom)?.applyVelocity(idPlayer, velocity);
+            this.worlds.get(idRoom)?.applyVelocity(idPlayer, velocity, angle);
         }
     }
 
