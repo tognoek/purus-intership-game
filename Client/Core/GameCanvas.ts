@@ -12,6 +12,7 @@ export default class GameCanvas {
         this.app = new pc.Application(canvas, {
             mouse: new pc.Mouse(canvas),
             touch: new pc.TouchDevice(canvas),
+            keyboard: new pc.Keyboard(window),
         });
         this.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
         this.app.setCanvasResolution(pc.RESOLUTION_AUTO);
@@ -49,7 +50,8 @@ export default class GameCanvas {
 
         this.dot.setLocalScale(0.1, 0.1, 0.1);
         const redMaterial = new pc.StandardMaterial();
-        redMaterial.diffuse = new pc.Color(1, 0, 0); 
+        redMaterial.emissive = new pc.Color(1, 0, 0); 
+        redMaterial.useLighting = false;
         redMaterial.update();
         if (this.dot.model?.meshInstances?.[0]) {
             this.dot.model.meshInstances[0].material = redMaterial;

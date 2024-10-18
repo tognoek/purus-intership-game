@@ -2,6 +2,7 @@ import Rooms from './Rooms';
 import Player from '../Entities/Player';
 import World from './World';
 import Ammo from 'ammojs-typed';
+import Projectile from '../Entities/Projectile';
 
 export default class Session {
     private static instance: Session;
@@ -9,11 +10,13 @@ export default class Session {
     private players: Map<string, Player>;
     private worlds: Map<string, World>;
     private ammo!: typeof Ammo;
+    readonly point: number;
 
     private constructor() {
         this.rooms = new Rooms();
         this.players = new Map();
         this.worlds = new Map();
+        this.point = 5;
     }
 
     public static getInstance(): Session {
@@ -72,6 +75,17 @@ export default class Session {
         this.rooms.removePlayer(idPlayer);
     }
 
+    public updatePointHp(idAttack: string, idVictim: string){
+        let attack = this.players.get(idAttack);
+        let victim = this.players.get(idVictim);
+        if (attack && victim){
+            let dame = attack.getDame();
+            victim.updateHp(dame);
+            victim.updatePoint(-this.point)
+            attack.updatePoint(this.point);
+        }
+    }
+
     public getPlayers(): Map<string, Player> {
         return this.players;
     }
@@ -105,6 +119,13 @@ export default class Session {
         let idRoom = this.getidRoomByIdPlayer(idPlayer);
         if (idRoom) {
             this.worlds.get(idRoom)?.applyVelocity(idPlayer, velocity, angle);
+        }
+    }
+
+    public attack(idPlayer: string){
+        let idRoom = this.getidRoomByIdPlayer(idPlayer);
+        if (idRoom) {
+            this.worlds.get(idRoom)?.attack(idPlayer);
         }
     }
 

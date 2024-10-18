@@ -55,7 +55,7 @@ export default class Camera extends Entity {
         if (Math.abs(dx) < this.minD / 2){
             return;
         }
-        this.angle +=  0.05 * (dx > 0 ? 1 : -1);
+        this.angle +=  0.01 * (dx > 0 ? 1 : -1);
         if (this.angle > 360){
             this.angle -= 360;
         }

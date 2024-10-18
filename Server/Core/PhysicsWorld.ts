@@ -6,12 +6,16 @@ export default class PhysicsWorld {
     private ammo!: typeof Ammo;
     private rigidBodies: Map<string, Ammo.btRigidBody>;
     private status: Map<string, string>;
+    private attacks: Map<string, number>;
     private angles: Map<string, number>;
+    private rigidBodyProjectiles: Map<string, Ammo.btRigidBody>;
 
     constructor() {
         this.status = new Map();
         this.angles = new Map();
         this.rigidBodies = new Map();
+        this.attacks = new Map();
+        this.rigidBodyProjectiles = new Map();
         this.init();
     }
 
@@ -72,11 +76,16 @@ export default class PhysicsWorld {
         );
     }
 
+    public addProjectile(idPlayer: string, idChar: number){
+        
+    }
+
     public addRigidBody(idPlayer: string, rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.addRigidBody(rigidBody);
         this.rigidBodies.set(idPlayer, rigidBody);
         this.status.set(idPlayer, 'idle');
         this.angles.set(idPlayer, 180);
+        this.attacks.set(idPlayer, Date.now());
     }
 
     public removeRigidBody(idPlayer: string) {
@@ -135,6 +144,14 @@ export default class PhysicsWorld {
             this.ammo.destroy(ammoForce);
         }
     }
+
+    public attack(idPlayer: string) {
+        if (this.status.get(idPlayer) != 'attack') {
+            this.status.set(idPlayer, 'attack');
+            this.attacks.set(idPlayer, Date.now());
+        }
+    }
+
     public applyVelocity(
         idPlayer: string,
         velocity: { x: number; y: number; z: number },
@@ -142,18 +159,22 @@ export default class PhysicsWorld {
     ) {
         const rigidBody = this.getRigidBodyById(idPlayer);
         if (rigidBody) {
-            if (this.status.get(idPlayer) != 'walk') {
-                this.status.set(idPlayer, 'walk');
-            }
-            if (velocity.x == 0 && velocity.y == 0 && velocity.z == 0) {
-                if (this.status.get(idPlayer) != 'idle') {
-                    this.status.set(idPlayer, 'idle');
+            velocity.x = 0;
+            const status = this.status.get(idPlayer);
+            if (status != 'attack' && status != 'jump') {
+                if (status != 'walk') {
+                    this.status.set(idPlayer, 'walk');
                 }
-            }
-            if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
-                if (this.status.get(idPlayer) != 'jump') {
+                if (velocity.x == 0 && velocity.y == 0 && velocity.z == 0) {
+                    if (status != 'idle') {
+                        this.status.set(idPlayer, 'idle');
+                    }
+                }
+                if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
                     this.status.set(idPlayer, 'jump');
                 }
+            } else {
+                return;
             }
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
@@ -180,6 +201,18 @@ export default class PhysicsWorld {
             .forEach((_, key) => {
                 if (this.getCollidingRigidBodies(key).includes('ground')) {
                     if (this.status.get(key) == 'jump') {
+                        this.status.set(key, 'idle');
+                    }
+                }
+                if (
+                    Date.now() - (this.attacks.get(key) ?? 0) > 920 &&
+                    this.status.get(key) == 'attack'
+                ) {
+                    this.status.set(key, 'idle');
+                }
+                const velocity = this.rigidBodies.get(key)?.getLinearVelocity();
+                if (velocity && velocity.x() == 0 && velocity.y() == 0 && velocity.z() == 0) {
+                    if (this.status.get(key) != 'attack') {
                         this.status.set(key, 'idle');
                     }
                 }

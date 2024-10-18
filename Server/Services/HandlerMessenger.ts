@@ -64,6 +64,9 @@ export default class HandlerMessenger {
                 data = msg.getData() as { velocity: { x: number; y: number; z: number } , angle: number };
                 this.readMessenger.applyVelocity(idPlayer, data.velocity, data.angle);
                 break;
+            case 13: // Attack
+                this.readMessenger.playerAttack(idPlayer);
+                break;
             default:
                 break;
         }

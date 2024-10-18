@@ -28,29 +28,20 @@ export default class Models{
     }
 
     public createRigidBody() :Ammo.btRigidBody {
-        // Tạo hình dạng va chạm (Collision Shape)
         const shape = new this.ammo.btBoxShape(new this.ammo.btVector3(this.size.x, this.size.y, this.size.z));
-        shape.setMargin(0.05); // Thiết lập khoảng cách giữa các hình dạng
+        shape.setMargin(0.05); 
 
-        // Tạo trạng thái chuyển động (Motion State)
         const transform = new this.ammo.btTransform();
         transform.setIdentity();
         transform.setOrigin(new this.ammo.btVector3(this.position.x, this.position.y, this.position.z));
 
         const motionState = new this.ammo.btDefaultMotionState(transform);
         
-        // Tính toán độ cản
         const localInertia = new this.ammo.btVector3(0, 0, 0);
         shape.calculateLocalInertia(this.mass, localInertia);
 
-        // Tạo RigidBody
         const rigidBodyInfo = new this.ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, localInertia);
         const rigidBody = new this.ammo.btRigidBody(rigidBodyInfo);
-        // this.ammo.destroy(shape);
-        // this.ammo.destroy(transform);
-        // this.ammo.destroy(motionState);
-        // this.ammo.destroy(localInertia);
-        // this.ammo.destroy(rigidBodyInfo);
         return rigidBody;
     }
 }

@@ -1,5 +1,6 @@
 import PhysicsWorld from './PhysicsWorld';
 import Models from './Models';
+import Session from './Session';
 
 export default class World {
     private idRoom: string;
@@ -13,6 +14,10 @@ export default class World {
         this.createGround();
     }
 
+    public getIdRoom(): string{
+        return this.idRoom;
+    }
+
     public addPlayer(idPlayer: string) {
         Models.getInstance().setInfo({ x: Math.random() * 4 - 8, y: 20, z: 1 }, { x: 1, y: 1, z: 1 });
         const rigidBody = Models.getInstance().createRigidBody();
@@ -20,7 +25,20 @@ export default class World {
         this.physicWorld.addRigidBody(idPlayer, rigidBody);
     }
 
+    public addProjectile(idPlayer: string){
+        let player = Session.getInstance().getPlayers().get(idPlayer);
+        if (player){
+            let idChar = player.getChar();
+            let size;
+            if (idChar)
+            Models.getInstance().setInfo({x: 0, y: 0, z: 0}, {})
+            let projectile = 
+            
+        }
+    }
+
     public removePlayer(idPlayer: string) {
+        this.players = this.players.filter(item => item != idPlayer);
         this.physicWorld.removeRigidBody(idPlayer);
     }
 
@@ -30,6 +48,10 @@ export default class World {
 
     public applyVelocity(idPlayer: string, velocity: {x: number, y: number, z: number}, angle: number){
         this.physicWorld.applyVelocity(idPlayer, velocity, angle);
+    }
+
+    public attack(idPlayer: string){
+        this.physicWorld.attack(idPlayer);
     }
 
     public update(dt: number | null) {

@@ -24,4 +24,8 @@ export default class ReadMessenger {
     ) {
         Session.getInstance().applyVelocity(idPlayer, velocity, angle);
     }
+
+    public playerAttack(idPlayer: string){
+        Session.getInstance().attack(idPlayer);
+    }
 }

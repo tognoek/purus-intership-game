@@ -21,7 +21,7 @@ export default class CreateModel {
                 url: '../Assets/Animations/idle_nd.glb',
             }),
             Walk: new pc.Asset('walk', 'animation', {
-                url: '../Assets/Animations/walk.glb',
+                url: '../Assets/Animations/run.glb',
             }),
             Attack: new pc.Asset('attack', 'animation', {
                 url: '../Assets/Animations/attack.glb',

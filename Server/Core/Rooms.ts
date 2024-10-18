@@ -1,5 +1,5 @@
 import Player from '../Entities/Player';
-import Room from './Room';
+import Room from '../Entities/Room'
 
 export default class Rooms {
     private rooms: Set<Room>;
