@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import Session from '../Services/Session';
+import Session from '../Core/Session';
 import { rotateAroundY } from '../Utils/Math';
 
 export default class Model {

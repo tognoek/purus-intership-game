@@ -2,7 +2,7 @@ import * as pc from 'playcanvas';
 
 import Entity from './Enity';
 import {rotateAroundY} from '../Utils/Math';
-import Session from '../Services/Session';
+import Session from '../Core/Session';
 
 export default class Camera extends Entity {
     private target: string;
@@ -40,7 +40,7 @@ export default class Camera extends Entity {
     }
 
     public update(targetPosition: pc.Vec3) {
-        const targetCameraPosition = rotateAroundY(targetPosition, -2, -5, this.angle)
+        const targetCameraPosition = rotateAroundY(targetPosition, -2, -3, this.angle)
         const targetPositionPoint =  rotateAroundY(targetPosition, 0, 10, this.angle)
         targetCameraPosition.y += this.y;
         targetPositionPoint.y -= 2 * this.y;
@@ -75,8 +75,8 @@ export default class Camera extends Entity {
         this.time = time;
         this.y += 0.02 * (dy > 0 ? 1 : -1);
         // Session.getInstance().game.rotateUser({x: 0, y: -(dx / 100), z:0})
-        if (this.y > 2){
-            this.y = 2;
+        if (this.y > 1){
+            this.y = 1;
         }
         if (this.y < 0){
             this.y = 0;

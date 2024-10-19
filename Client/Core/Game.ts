@@ -2,7 +2,7 @@ import * as pc from 'playcanvas';
 import Camera from '../Entities/Camera';
 import Model from '../Entities/Model';
 import Player from '../Entities/Player';
-import Session from '../Services/Session';
+import Session from './Session';
 
 export default class Game {
     private players: Map<string, Player>;

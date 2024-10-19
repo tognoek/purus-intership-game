@@ -1,21 +1,15 @@
-import PhysicsWorld from './PhysicsWorld';
+import PhysicsWorld from '../Core/PhysicsWorld';
 import Models from './Models';
-import Session from './Session';
+import Session from '../Core/Session';
 
-export default class World {
-    private idRoom: string;
+export default class World{
     private physicWorld: PhysicsWorld;
     private players: Array<string>;
 
-    constructor(idRoom: string) {
-        this.idRoom = idRoom;
+    constructor() {
         this.physicWorld = new PhysicsWorld();
         this.players = new Array();
         this.createGround();
-    }
-
-    public getIdRoom(): string{
-        return this.idRoom;
     }
 
     public addPlayer(idPlayer: string) {
@@ -26,15 +20,6 @@ export default class World {
     }
 
     public addProjectile(idPlayer: string){
-        let player = Session.getInstance().getPlayers().get(idPlayer);
-        if (player){
-            let idChar = player.getChar();
-            let size;
-            if (idChar)
-            Models.getInstance().setInfo({x: 0, y: 0, z: 0}, {})
-            let projectile = 
-            
-        }
     }
 
     public removePlayer(idPlayer: string) {
@@ -50,10 +35,6 @@ export default class World {
         this.physicWorld.applyVelocity(idPlayer, velocity, angle);
     }
 
-    public attack(idPlayer: string){
-        this.physicWorld.attack(idPlayer);
-    }
-
     public update(dt: number | null) {
         const timeStep = dt || 1 / 30;
         const maxSubSteps = 10;
@@ -67,8 +48,8 @@ export default class World {
 
         this.physicWorld.addRigidBody('ground', groundRigidBody);
     }
-    public getData(): Record<string, { x: number; y: number; z: number }> {
-        let result: Record<string, { x: number; y: number; z: number }> = {};
+    public getData(): Record<string, any> {
+        let result: Record<string, any> = {};
         this.players.forEach((id) => {
             let position = this.physicWorld.getRigidBodyPosition(id);
             if (position) {

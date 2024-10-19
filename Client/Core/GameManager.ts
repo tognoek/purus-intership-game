@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-import Session from '../Services/Session';
+import Session from './Session';
 import Input from './Input';
 import GameCanvas from './GameCanvas';
 import CreateModel from '../Script/CreateModle';

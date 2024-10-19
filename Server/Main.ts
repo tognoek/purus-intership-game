@@ -1,4 +1,7 @@
-import ServerManager from "./Core/ServerManager";
+import Session from "./Core/Session";
 
-const servermanager = new ServerManager();
-servermanager.update();
+Session.gI().init().then(() => {
+    console.log('Load Ammo')
+    Session.gI().setUpServer();
+    Session.gI().loop();
+});

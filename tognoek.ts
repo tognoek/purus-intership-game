@@ -1,2 +1,1 @@
-let a = {a : 2}
-console.log(typeof a)
+console.log(Math.floor(Math.random() * 4))

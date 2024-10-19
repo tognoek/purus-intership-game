@@ -5,13 +5,11 @@ export default class PhysicsWorld {
     private dynamicsWorld!: Ammo.btDiscreteDynamicsWorld;
     private ammo!: typeof Ammo;
     private rigidBodies: Map<string, Ammo.btRigidBody>;
-    private status: Map<string, string>;
     private attacks: Map<string, number>;
     private angles: Map<string, number>;
     private rigidBodyProjectiles: Map<string, Ammo.btRigidBody>;
 
     constructor() {
-        this.status = new Map();
         this.angles = new Map();
         this.rigidBodies = new Map();
         this.attacks = new Map();
@@ -20,7 +18,7 @@ export default class PhysicsWorld {
     }
 
     init() {
-        this.ammo = Session.getInstance().getAmmo();
+        this.ammo = Session.gI().getAmmo();
         const collisionConfiguration = new this.ammo.btDefaultCollisionConfiguration();
         const dispatcher = new this.ammo.btCollisionDispatcher(collisionConfiguration);
         const overlappingPairCache = new this.ammo.btDbvtBroadphase();
@@ -59,7 +57,6 @@ export default class PhysicsWorld {
         return collidingIds;
     }
 
-    // Hàm kiểm tra va chạm giữa hai AABB
     private isAABBIntersect(
         aabb0Min: Ammo.btVector3,
         aabb0Max: Ammo.btVector3,
@@ -83,7 +80,6 @@ export default class PhysicsWorld {
     public addRigidBody(idPlayer: string, rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.addRigidBody(rigidBody);
         this.rigidBodies.set(idPlayer, rigidBody);
-        this.status.set(idPlayer, 'idle');
         this.angles.set(idPlayer, 180);
         this.attacks.set(idPlayer, Date.now());
     }
@@ -105,7 +101,7 @@ export default class PhysicsWorld {
     }
     public getRigidBodyPosition(
         id: string
-    ): { x: number; y: number; z: number; angle: number; status: string } | null {
+    ): { x: number; y: number; z: number; angle: number} | null {
         const rigidBody = this.getRigidBodyById(id);
         if (rigidBody) {
             const motionState = rigidBody.getMotionState();
@@ -114,14 +110,12 @@ export default class PhysicsWorld {
                 motionState.getWorldTransform(transform);
                 const origin = transform.getOrigin();
                 this.ammo.destroy(transform);
-                let status = this.status.get(id);
                 let angle = this.angles.get(id);
                 return {
                     x: origin.x(),
                     y: origin.y(),
                     z: origin.z(),
                     angle: angle ?? 180,
-                    status: status ?? 'idle',
                 };
             }
         }
@@ -133,22 +127,12 @@ export default class PhysicsWorld {
             if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
                 return;
             }
-            if (this.status.get(idPlayer) != 'jump') {
-                this.status.set(idPlayer, 'jump');
-            }
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
             const ammoForce = new this.ammo.btVector3(force.x, force.y, force.z);
             rigidBody.applyCentralForce(ammoForce);
             this.ammo.destroy(ammoForce);
-        }
-    }
-
-    public attack(idPlayer: string) {
-        if (this.status.get(idPlayer) != 'attack') {
-            this.status.set(idPlayer, 'attack');
-            this.attacks.set(idPlayer, Date.now());
         }
     }
 
@@ -160,22 +144,6 @@ export default class PhysicsWorld {
         const rigidBody = this.getRigidBodyById(idPlayer);
         if (rigidBody) {
             velocity.x = 0;
-            const status = this.status.get(idPlayer);
-            if (status != 'attack' && status != 'jump') {
-                if (status != 'walk') {
-                    this.status.set(idPlayer, 'walk');
-                }
-                if (velocity.x == 0 && velocity.y == 0 && velocity.z == 0) {
-                    if (status != 'idle') {
-                        this.status.set(idPlayer, 'idle');
-                    }
-                }
-                if (!this.getCollidingRigidBodies(idPlayer).includes('ground')) {
-                    this.status.set(idPlayer, 'jump');
-                }
-            } else {
-                return;
-            }
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
@@ -196,30 +164,5 @@ export default class PhysicsWorld {
 
     public stepSimulation(timeStep: number = 1 / 30, maxSubSteps: number = 10) {
         this.dynamicsWorld.stepSimulation(timeStep, maxSubSteps);
-        Session.getInstance()
-            .getPlayers()
-            .forEach((_, key) => {
-                if (this.getCollidingRigidBodies(key).includes('ground')) {
-                    if (this.status.get(key) == 'jump') {
-                        this.status.set(key, 'idle');
-                    }
-                }
-                if (
-                    Date.now() - (this.attacks.get(key) ?? 0) > 920 &&
-                    this.status.get(key) == 'attack'
-                ) {
-                    this.status.set(key, 'idle');
-                }
-                const velocity = this.rigidBodies.get(key)?.getLinearVelocity();
-                if (velocity && velocity.x() == 0 && velocity.y() == 0 && velocity.z() == 0) {
-                    if (this.status.get(key) != 'attack') {
-                        this.status.set(key, 'idle');
-                    }
-                }
-            });
-    }
-
-    public getDynamicsWorld() {
-        return this.dynamicsWorld;
     }
 }

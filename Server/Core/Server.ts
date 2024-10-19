@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getFormattedTime } from '../Utils/Time';
 import HandlerMessenger from '../Services/HandlerMessenger';
 import Messenger from '../Services/Messenger';
+import Manager from './Manager';
 
 dotenv.config();
 
@@ -24,7 +25,6 @@ export default class Server {
                 this.port
             } | time: ${getFormattedTime()}`
         );
-        this.setupListeners();
     }
     public close() {
         this.wss.close(() => {
@@ -57,14 +57,13 @@ export default class Server {
                 this.port
             } | time: ${getFormattedTime()}`
         );
-        this.setupListeners();
     }
 
     private removeListeners() {
         this.wss.on('connection', () => {});
     }
 
-    private setupListeners() {
+    public setupListeners() {
         this.wss.on('connection', (ws: WebSocket) => {
             this.clients.set(ws, uuidv4());
             this.handleConnection(ws);
@@ -78,13 +77,12 @@ export default class Server {
         }
         console.log(`New player connected: ${getFormattedTime()}, id: ${clientId}`);
         this.handlerMessenger.onSendIdUser(ws);
-        this.handlerMessenger.onConnect(clientId ?? null);
+        this.handlerMessenger.onConnect();
         ws.on('message', (message: WebSocket.Data) => this.handleMessage(ws, message));
         ws.on('close', () => this.handleDisconnect(ws));
     }
 
     private handleMessage(ws: WebSocket, message: WebSocket.Data) {
-        // console.log('Received:', Messenger.fromString(message.toString()));
         this.handlerMessenger.onMessage(ws, Messenger.fromString(message.toString()));
     }
 
@@ -92,15 +90,7 @@ export default class Server {
         this.handlerMessenger.onDisconnect(ws);
     }
 
-    public sendData() {
+    public senData(){
         this.handlerMessenger.sendData();
-    }
-
-    public sendMsgAll(messenge: string) {
-        this.clients.forEach((idClient, wsClient) => {
-            if (wsClient.readyState === WebSocket.OPEN) {
-                wsClient.send(new Messenger(-28, { msg: messenge }).toString());
-            }
-        });
     }
 }

@@ -1,13 +1,12 @@
-import Game from '../Core/Game';
-import GameCanvas from '../Core/GameCanvas';
+import Game from './Game';
+import GameCanvas from './GameCanvas';
 import Camera from '../Entities/Camera';
-import NetWork from '../Entities/Network';
+import NetWork from './Network';
 import Player from '../Entities/Player';
 import { getLocalIP } from '../Utils/OperatingSystem';
-import ISession from './ISession';
-import Messange from './Messange';
+import Messange from '../Services/Messange';
 
-export default class Session implements ISession {
+export default class Session{
     private connected = false;
     private static instance: Session;
     private netWork: NetWork;

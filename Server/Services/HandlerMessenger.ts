@@ -2,11 +2,10 @@
 import { WebSocket } from 'ws';
 
 import Messenger from './Messenger';
-import Player from '../Entities/Player';
-import Session from '../Core/Session';
 import ReadMessenger from './ReadMessenger';
 
 import { getFormattedTime } from '../Utils/Time';
+import Manager from '../Core/Manager';
 
 export default class HandlerMessenger {
     private clients: Map<WebSocket, string>;
@@ -16,11 +15,7 @@ export default class HandlerMessenger {
         this.readMessenger = new ReadMessenger();
     }
 
-    onConnect(id: string | null): void {
-        if (id) {
-            Session.getInstance().addPlayer(new Player(id, null));
-        }
-    }
+    onConnect(): void {}
     onConnectFail(): void {
         console.log('ConnectFail');
     }
@@ -36,20 +31,13 @@ export default class HandlerMessenger {
         console.log(`${getFormattedTime()}: ${idPlayer} send Messenger`);
         console.log(msg);
         let data: any;
-        this.clients.forEach((idClient, wsClient) => {
-            if (wsClient !== client && wsClient.readyState === WebSocket.OPEN) {
-                // console.log(Session.getInstance().getPlayers())
-                // wsClient.send(new Messenger(3, { Key: Object.fromEntries(Session.getInstance().getPlayers())}).toString());
-            } else {
-                if (wsClient.readyState === WebSocket.OPEN) {
-                    // wsClient.send(new Messenger(1, { a: 111 }).toString());
-                }
-            }
-        });
         if (!idPlayer) {
             return;
         }
         switch (msg.getId()) {
+            case 0: // New room
+                this.readMessenger.newRoom(msg);
+                break;
             case 1: // Join Room
                 this.readMessenger.joinRoom(msg);
                 this.sendDataToPlayer(client, new Messenger(2, { name: 'Mage' }));
@@ -57,11 +45,14 @@ export default class HandlerMessenger {
             case 2: // Add Models
                 break;
             case 11: // Jump
-                data = msg.getData() as { force: { x: number; y: number; z: number }};
+                data = msg.getData() as { force: { x: number; y: number; z: number } };
                 this.readMessenger.applyForce(idPlayer, data.force);
                 break;
             case 12: // Movent
-                data = msg.getData() as { velocity: { x: number; y: number; z: number } , angle: number };
+                data = msg.getData() as {
+                    velocity: { x: number; y: number; z: number };
+                    angle: number;
+                };
                 this.readMessenger.applyVelocity(idPlayer, data.velocity, data.angle);
                 break;
             case 13: // Attack
@@ -75,7 +66,7 @@ export default class HandlerMessenger {
     onDisconnect(ws: WebSocket): void {
         const clientId = this.clients.get(ws);
         if (clientId) {
-            Session.getInstance().removePlayer(clientId);
+            Manager.gI().removePlayer(clientId);
             this.clients.delete(ws);
             console.log(`Player with id: ${clientId}  disconnected: ${getFormattedTime()}`);
         }
@@ -90,14 +81,19 @@ export default class HandlerMessenger {
     }
 
     public sendData() {
-        let data = Session.getInstance().getPosition();
+        let data = Manager.gI().getDataPositionAll();
+        let char = Manager.gI().getDataCharAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
             idPlayer = this.getIdPlayerByWs(ws);
             if (idPlayer && idPlayer == key) {
-                let idRoom = Session.getInstance().getidRoomByIdPlayer(idPlayer);
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
                 if (idRoom) {
-                    ws.send(new Messenger(300, data[idRoom]).toString());
+                    let dataSend = data[idRoom];
+                    for (const key in dataSend) {
+                        dataSend[key].char = char[idRoom][key];
+                    }
+                    ws.send(new Messenger(300, dataSend).toString());
                 }
             }
         });

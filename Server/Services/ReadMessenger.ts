@@ -1,20 +1,25 @@
+import Manager from '../Core/Manager';
 import Session from '../Core/Session';
 import Messenger from './Messenger';
-import Models from '../Core/Models';
 
 export default class ReadMessenger {
     constructor() {
         // new Read Messenger
     }
 
+    public newRoom(msg: Messenger){
+        const idRoom = (msg.getData() as { idRoom?: string })?.idRoom;
+        Manager.gI().newRoom(idRoom!);
+    }
+
     public joinRoom(msg: Messenger) {
         let user = msg.getUser();
-        const roomId = (msg.getData() as { idRoom?: string })?.idRoom;
-        Session.getInstance().joinRoom(roomId, user || null);
+        const idRoom = (msg.getData() as { idRoom?: string })?.idRoom;
+        Manager.gI().joinRoom(idRoom!, user!);
     }
 
     public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
-        Session.getInstance().applyForce(idPlayer, force);
+        Manager.gI().applyForce(idPlayer, force);
     }
 
     public applyVelocity(
@@ -22,10 +27,10 @@ export default class ReadMessenger {
         velocity: { x: number; y: number; z: number },
         angle: number
     ) {
-        Session.getInstance().applyVelocity(idPlayer, velocity, angle);
+        Manager.gI().applyVelocity(idPlayer, velocity, angle);
     }
 
     public playerAttack(idPlayer: string){
-        Session.getInstance().attack(idPlayer);
+        Manager.gI().attack(idPlayer);
     }
 }

@@ -1,3 +1,3 @@
 export function getLocalIP(): string {
-    return 'localhost';
+    return '192.168.100.117';
 }

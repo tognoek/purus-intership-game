@@ -13,6 +13,9 @@ export default class Messenger {
     public getData(): object {
         return this.data;
     }
+    public updateData(data: object){
+        this.data = {...this.data, ...data}
+    }
     public setUser(id: string | undefined) {
         this.idUser = id ?? null;
     }

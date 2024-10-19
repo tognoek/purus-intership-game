@@ -3,7 +3,7 @@ import * as pc from 'playcanvas';
 import Model from '../Entities/Model';
 import Player from '../Entities/Player';
 import CreateModel from '../Script/CreateModle';
-import Session from './Session';
+import Session from '../Core/Session';
 
 export default class ReadMessenge {
     constructor() {}
@@ -16,8 +16,9 @@ export default class ReadMessenge {
 
     // public addModel
     public updateDataMap(data: object) {
+        console.log(data)
         let dataFormat = data as {
-            [key: string]: { x: number; y: number; z: number;angle: number, status: string };
+            [key: string]: { x: number; y: number; z: number; angle: number; status: string, char: number };
         };
         let keys = Object.keys(dataFormat);
         // console.log(keys)
@@ -36,14 +37,18 @@ export default class ReadMessenge {
                     if (player?.setStatus(status)) {
                         model.updateAnimation();
                     }
-                    model.updateAngle(key,new pc.Vec3(position.x, position.y, position.z), dataFormat[key].angle)
+                    model.updateAngle(
+                        key,
+                        new pc.Vec3(position.x, position.y, position.z),
+                        dataFormat[key].angle
+                    );
                     player?.setPosition(position);
                     if (user) {
                         Session.getInstance().camera?.update(user.getPosition());
                     }
                 }
             } else {
-                let entity = CreateModel.getInstance(null).createCharacter('mage', position);
+                let entity = CreateModel.getInstance(null).createCharacter(dataFormat[key].char, position);
                 Session.getInstance().game.addPlayer(
                     new Player(key, new pc.Vec3(position.x, position.y, position.z), key)
                 );

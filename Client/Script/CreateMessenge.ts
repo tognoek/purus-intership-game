@@ -1,5 +1,5 @@
 import Messange from '../Services/Messange';
-import Session from '../Services/Session';
+import Session from '../Core/Session';
 
 export default class CreateMessege {
     private static instance: CreateMessege;
@@ -9,6 +9,10 @@ export default class CreateMessege {
             this.instance = new CreateMessege();
         }
         return this.instance;
+    }
+
+    public newRoom(idRoom: string): Messange{
+        return new Messange(0, {idRoom: idRoom});
     }
 
     public joinRoom(idRoom: string): Messange {

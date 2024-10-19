@@ -1,7 +1,7 @@
 import { MessageEvent } from 'ws';
 import IMessageHandler from './IMessageHandler';
 import Messange from './Messange';
-import Session from './Session';
+import Session from '../Core/Session';
 import ReadMessenge from './ReadMessege';
 
 // handle messages from the server
@@ -35,6 +35,7 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
         if (this.socket) {
             let msg = Messange.fromString(data);
             let realData = msg?.getData();
+            console.log(realData)
             if (realData) {
                 switch (msg?.getId()) {
                     case 0:

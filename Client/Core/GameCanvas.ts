@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 import CreateModel from '../Script/CreateModle';
-import Session from '../Services/Session';
+import Session from './Session';
 
 export default class GameCanvas {
     private app: pc.Application;

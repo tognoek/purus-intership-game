@@ -1,7 +1,7 @@
 import * as pc from 'playcanvas';
 import CreateMessege from '../Script/CreateMessenge';
 import Messange from '../Services/Messange';
-import Session from '../Services/Session';
+import Session from './Session';
 
 export default class Input {
     constructor() {}
@@ -68,6 +68,9 @@ export default class Input {
         let message: Messange | null = null;
         const velocity = 8;
         switch (event.key) {
+            case pc.KEY_I:
+                message = CreateMessege.getInstance().newRoom('1403');
+                break;
             case pc.KEY_Y:
                 message = CreateMessege.getInstance().joinRoom('1403');
                 break;

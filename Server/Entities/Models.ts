@@ -1,18 +1,20 @@
 import Ammo from "ammojs-typed";
-import Session from "./Session";
+import Session from "../Core/Session";
 
 export default class Models{
     private static instance: Models;
     private position: { x: number; y: number; z: number };
     private size: { x: number; y: number; z: number };
     private mass: number;
+    private margin: number;
     private ammo!: typeof Ammo;
 
     private constructor() {
         this.position = {x: 0, y: 0, z: 0};
         this.size = {x: 0, y: 0, z: 0};
         this.mass = 1;
-        this.ammo = Session.getInstance().getAmmo();
+        this.margin = 0.05;
+        this.ammo = Session.gI().getAmmo();
     }
     public static getInstance(): Models {
         if (!Models.instance) {
@@ -21,15 +23,16 @@ export default class Models{
         return Models.instance;
     }
 
-    public setInfo(position: { x: number; y: number; z: number }, size: { x: number; y: number; z: number }, mass: number = 1){
+    public setInfo(position: { x: number; y: number; z: number }, size: { x: number; y: number; z: number }, mass: number = 1, margin: number = 0.05){
         this.position = position;
         this.size = size;
         this.mass = mass;
+        this.margin = margin;
     }
 
     public createRigidBody() :Ammo.btRigidBody {
         const shape = new this.ammo.btBoxShape(new this.ammo.btVector3(this.size.x, this.size.y, this.size.z));
-        shape.setMargin(0.05); 
+        shape.setMargin(this.margin); 
 
         const transform = new this.ammo.btTransform();
         transform.setIdentity();

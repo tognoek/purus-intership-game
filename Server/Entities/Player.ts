@@ -5,22 +5,27 @@ export default class Player {
     private point: number;
     private dame: number;
     private idChar: number;
+    private status: string;
 
     constructor(id: string, name: string | null) {
-        // this.name = name;
         this.id = id;
         this.name = name ?? this.id;
         this.hp = 100;
         this.point = 0;
         this.dame = 10;
         this.idChar = 0;
+        this.status = 'idle';
     }
 
-    public setChar(id: number){
+    public setStatus(status: string) {
+        this.status = status;
+    }
+
+    public setChar(id: number) {
         this.idChar = id;
     }
 
-    public getChar(): number{
+    public getChar(): number {
         return this.idChar;
     }
 
@@ -28,18 +33,18 @@ export default class Player {
         this.hp += hp;
     }
 
-    public getHp(): number{
+    public getHp(): number {
         return this.hp;
     }
 
     public updatePoint(point: number) {
         this.point += point;
-        if (this.point < 0){
+        if (this.point < 0) {
             this.point = 0;
         }
     }
 
-    public getPoint(): number{
+    public getPoint(): number {
         return this.point;
     }
 
@@ -47,7 +52,7 @@ export default class Player {
         return this.dame;
     }
 
-    public updateDame(dame: number){
+    public updateDame(dame: number) {
         this.dame += dame;
     }
 
@@ -59,5 +64,17 @@ export default class Player {
     }
     public setName(name: string): void {
         this.name = name;
+    }
+
+    public toString() {
+        return {
+            id: this.id,
+            name: this.name,
+            char: this.idChar,
+            hp: this.hp,
+            point: this.point,
+            dame: this.dame,
+            status: this.status
+        };
     }
 }
