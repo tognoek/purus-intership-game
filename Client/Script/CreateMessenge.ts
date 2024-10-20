@@ -29,6 +29,6 @@ export default class CreateMessege {
         });
     }
     public attack() {
-        return new Messange(13, { force: 'attack' });
+        return new Messange(13, { angle: Session.getInstance().camera?.getAngle() });
     }
 }

@@ -47,7 +47,7 @@ export default class Session{
     }
 
     public getIdUser(): string | null {
-        return this.idUser;
+        return this!.idUser;
     }
 
     public getUser(): Player | undefined{

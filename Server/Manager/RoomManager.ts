@@ -9,7 +9,7 @@ export default class RoomManager {
         this.isRoom = new Map();
     }
 
-    public checkRoom(id: string){
+    public checkRoom(id: string) {
         return this.isRoom.get(id);
     }
     public newRoom(id: string) {
@@ -28,6 +28,15 @@ export default class RoomManager {
         return result;
     }
 
+    public getRoomByIdPlayer(idPlayer: string) {
+        for (const room of this.rooms) {
+            if (room.isPlayer(idPlayer)) {
+                return room;
+            }
+        }
+        return null;
+    }
+
     public getIdRoomByIdPlayer(idPlayer: string): string | null {
         for (const room of this.rooms) {
             if (room.isPlayer(idPlayer)) {
@@ -39,15 +48,26 @@ export default class RoomManager {
     public removeRoom(idRoom: string) {
         for (const room of this.rooms) {
             if (room.getId() == idRoom) {
+                this.isRoom.set(room.getId(), false);
                 this.rooms.delete(room);
                 return;
             }
         }
     }
 
-    public getPlayers(idPlayer: string): Set<Player> | null {
+    public getAllPlayers(): Player[] {
+        let result: Player[] = [];
+        this.rooms.forEach((room) => {
+            room.getPlayers().forEach((player) => {
+                result.push(player);
+            });
+        });
+        return result;
+    }
+
+    public getPlayers(idRoom: string): Set<Player> | null {
         for (const room of this.rooms) {
-            if (room.getId() == idPlayer) {
+            if (room.getId() == idRoom) {
                 return room.getPlayers();
             }
         }
@@ -83,6 +103,13 @@ export default class RoomManager {
         });
     }
 
+    public updateAttack(data: { playerA: string; playerB: string }) {
+        const room = this.getRoomByIdPlayer(data.playerA);
+        if (room) {
+            room.updateAttack(data.playerA, data.playerB);
+        }
+    }
+
     public clear(): void {
         const Rommdelete: Room[] = [];
 
@@ -93,6 +120,7 @@ export default class RoomManager {
         });
 
         Rommdelete.forEach((room) => {
+            this.isRoom.set(room.getId(), false);
             this.rooms.delete(room);
         });
     }

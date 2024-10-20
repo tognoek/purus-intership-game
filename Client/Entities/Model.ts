@@ -5,8 +5,12 @@ import { rotateAroundY } from '../Utils/Math';
 export default class Model {
     private id: string;
     private model: pc.Entity;
+    private isAttack: boolean;
+    private timeOutId: NodeJS.Timeout | null;
     constructor(id: string, model: pc.Entity) {
         this.id = id;
+        this.isAttack = false;
+        this.timeOutId = null;
         this.model = model;
         this.model.setLocalScale(1, 1, -1);
     }
@@ -24,14 +28,34 @@ export default class Model {
         if (!player) {
             return;
         }
-        this.model.animation?.play(player.getStatus(), 0.2);
-    }
-
-    public updateAngle(id: string,position: pc.Vec3, angle: number) {
-        if (Session.getInstance().getIdUser() == id){
+        if (this.isAttack){
+            // if (player.isAttack()){
+            //     if (this.timeOutId){
+            //         clearTimeout(this.timeOutId);
+            //         this.timeOutId = setTimeout(() => {
+            //             this.isAttack = false;
+            //             this.timeOutId = null;
+            //             this.model.animation?.play(player.getStatus(), 0.2);
+            //         }, ((this.model.animation?.duration ?? 0) - 0.2) * 1000);
+            //     }
+            // }
             return;
         }
-        const targetPosition =  rotateAroundY(position, 0, 10, angle)
+        this.model.animation?.play(player.getStatus(), 0.2);
+        if (player.isAttack()) {
+            this.isAttack = true;
+            this.timeOutId = setTimeout(() => {
+                this.isAttack = false;
+                this.timeOutId = null;
+                this.model.animation?.play(player.getStatus(), 0.2);
+            }, ((this.model.animation?.duration ?? 0) - 0.2) * 1000);
+        }
+    }
+    public updateAngle(id: string, position: pc.Vec3, angle: number) {
+        if (Session.getInstance().getIdUser() == id) {
+            return;
+        }
+        const targetPosition = rotateAroundY(position, 0, 10, angle);
         this.model.lookAt(targetPosition);
     }
 

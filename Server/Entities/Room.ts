@@ -45,6 +45,17 @@ export default class Room{
         return this.players.size;
     }
 
+    public updateAttack(playerA: string, playerB: string){
+        const attack = this.getPlayer(playerA);
+        const victim = this.getPlayer(playerB);
+        if (attack && victim){
+            console.log(attack.getId(), victim.getId());
+            const dame = attack.getDame();
+            victim.updateHp(-dame);
+            attack.updatePoint(5);
+        }
+    }
+
     public getPlayer(idPlayer: string){
         for (const player of this.players){
             if (player.getId() == idPlayer){

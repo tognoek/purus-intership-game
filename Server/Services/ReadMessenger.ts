@@ -30,7 +30,8 @@ export default class ReadMessenger {
         Manager.gI().applyVelocity(idPlayer, velocity, angle);
     }
 
-    public playerAttack(idPlayer: string){
+    public playerAttack(idPlayer: string, angle: number){
+        this.applyVelocity(idPlayer, {x: 0, y: 0, z: 0}, angle);
         Manager.gI().attack(idPlayer);
     }
 }

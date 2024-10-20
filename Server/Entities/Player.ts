@@ -17,6 +17,10 @@ export default class Player {
         this.status = 'idle';
     }
 
+    public isDie(){
+        return this.hp < 1;
+    }
+
     public setStatus(status: string) {
         this.status = status;
     }

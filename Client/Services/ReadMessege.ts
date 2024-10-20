@@ -14,9 +14,21 @@ export default class ReadMessenge {
         Session.getInstance().setIdUser(idUser);
     }
 
+    public updatePoint(data: object){
+        console.log(data[0])
+        // data = data as {x: number, y: number, z: number, angle: number}[];
+        // if (data.length == 0){
+        //     return;
+        // }
+        let d = data[0]
+        if (!d){
+            return;
+        }
+        Session.getInstance().gameCanvas?.setPositionDot(new pc.Vec3(d.x, d.y, d.z));
+    }
+
     // public addModel
-    public updateDataMap(data: object) {
-        console.log(data)
+    public updateDataPlayer(data: object) {
         let dataFormat = data as {
             [key: string]: { x: number; y: number; z: number; angle: number; status: string, char: number };
         };

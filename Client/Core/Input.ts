@@ -17,13 +17,22 @@ export default class Input {
         }
     }
 
-    mouseDown(event: MouseEvent){
+    mouseDown(event: MouseEvent) {
         let message: Messange | null = null;
         switch (event.button) {
             case pc.MOUSEBUTTON_LEFT:
                 message = CreateMessege.getInstance().attack();
+                // let model = Session.getInstance().game.getModel(
+                //     Session.getInstance().getIdUser() ?? 'a'
+                // );
+                // let player = Session.getInstance().game.getPlayer(
+                //     Session.getInstance().getIdUser() ?? 'a'
+                // );
+                // if (player?.setStatus('attack')) {
+                //     model?.updateAnimation();
+                // }
                 break;
-        
+
             default:
                 break;
         }
@@ -88,6 +97,8 @@ export default class Input {
                 break;
             case pc.KEY_SPACE:
                 message = CreateMessege.getInstance().jump(0, 300, 0);
+                break;
+            case pc.KEY_K:
                 break;
             default:
                 // message = new Messange(3105, { tognoek: '3105' });

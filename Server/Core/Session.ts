@@ -25,7 +25,7 @@ export default class Session {
 
     public loop(){
         setInterval(() => {
-            Manager.gI().worldManager.update();
+            Manager.gI().updateWord();
             this.server.senData();
         }, 1000/ 30);
     }

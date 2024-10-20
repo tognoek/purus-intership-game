@@ -8,7 +8,7 @@ export default class Player extends Entity {
     constructor(id: string, position: pc.Vec3, name: string) {
         super(id, position);
         this.name = name;
-        this.status = 'walk';
+        this.status = 'idle';
     }
 
     public setPosition(position: { x: number; y: number; z: number }) {
@@ -21,6 +21,10 @@ export default class Player extends Entity {
             return true;
         }
         return false;
+    }
+
+    public isAttack(){
+        return this.status == 'attack';
     }
 
     public getStatus(): string {

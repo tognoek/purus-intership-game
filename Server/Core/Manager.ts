@@ -1,15 +1,18 @@
+import AttackManager from '../Manager/AttackManager';
 import RoomManager from '../Manager/RoomManager';
 import WorldManager from '../Manager/WorldManager';
 
 export default class Manager {
     public static instance: Manager;
 
-    public roomManager: RoomManager;
-    public worldManager: WorldManager;
+    private roomManager: RoomManager;
+    private worldManager: WorldManager;
+    private attackManager: AttackManager;
 
     private constructor() {
         this.roomManager = new RoomManager();
         this.worldManager = new WorldManager();
+        this.attackManager = new AttackManager();
     }
 
     public static gI(): Manager {
@@ -64,15 +67,40 @@ export default class Manager {
     public attack(idPlayer: string) {
         let idRoom = this.roomManager.getIdRoomByIdPlayer(idPlayer);
         if (idRoom) {
-            // this.worldManager.getWorld(idRoom)?.attack(idPlayer);
+            const idChar = this.roomManager.getPlayer(idPlayer)!.getChar();
+            if (this.attackManager.setAttack(idPlayer, idChar)) {
+                this.worldManager.addProjectile(idRoom, idPlayer, idChar);
+            }
         }
     }
 
+    public updateWord() {
+        this.worldManager.update();
+        const dataAttack = this.worldManager.getCollisonProjectile();
+        dataAttack.forEach(data => {
+            this.roomManager.updateAttack(data);
+        })
+    }
+
     public getDataPositionAll(): Record<string, any> {
-        return this.worldManager.getPosition();
+        return this.worldManager.getPositions();
     }
 
     public getDataCharAll(): Record<string, any> {
         return this.roomManager.getDataChars();
+    }
+    public getDataForceAll(): Record<string, any> {
+        return this.worldManager.getForces();
+    }
+    public getDataCollisionAll(): Record<string, any> {
+        return this.worldManager.getCollisions();
+    }
+
+    public getDataAttackAll() {
+        return this.attackManager.getData();
+    }
+
+    public getDataProjectileAll(){
+        return this.worldManager.getProjectiles();
     }
 }

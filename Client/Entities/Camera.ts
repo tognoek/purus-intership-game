@@ -11,6 +11,7 @@ export default class Camera extends Entity {
     private y: number;
     private minD: number = 20;
     private time: number;
+    private timeX: number;
 
     constructor(id: string, position: pc.Vec3, target: string) {
         super(id, position);
@@ -22,6 +23,7 @@ export default class Camera extends Entity {
         this.angle = 180;
         this.y = 1;
         this.time = Date.now()
+        this.timeX = Date.now()
     }
 
     public getTarget(): string {
@@ -49,13 +51,18 @@ export default class Camera extends Entity {
         const point = rotateAroundY(targetPosition, 0, 5, this.angle);
         point.y += 1;
         Session.getInstance().game.lockAtUser(targetPositionPoint)
-        Session.getInstance().gameCanvas?.setPositionDot(point);
+        // Session.getInstance().gameCanvas?.setPositionDot(point);
     }
     public rotateVectorAroundX(dx: number) {
         if (Math.abs(dx) < this.minD / 2){
             return;
         }
-        this.angle +=  0.01 * (dx > 0 ? 1 : -1);
+        const time = Date.now();
+        if (time - this.timeX < 20){
+            return;
+        }
+        this.timeX = time;
+        this.angle +=  (0.5 * (dx > 0 ? 1 : -1));
         if (this.angle > 360){
             this.angle -= 360;
         }

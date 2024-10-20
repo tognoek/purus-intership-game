@@ -48,7 +48,7 @@ export default class GameCanvas {
             type: 'sphere',
         });
 
-        this.dot.setLocalScale(0.1, 0.1, 0.1);
+        this.dot.setLocalScale(1, 1, 1);
         const redMaterial = new pc.StandardMaterial();
         redMaterial.emissive = new pc.Color(1, 0, 0); 
         redMaterial.useLighting = false;

@@ -6,6 +6,7 @@ import ReadMessenger from './ReadMessenger';
 
 import { getFormattedTime } from '../Utils/Time';
 import Manager from '../Core/Manager';
+import { handlerStatus } from '../Controllers/PlayerController';
 
 export default class HandlerMessenger {
     private clients: Map<WebSocket, string>;
@@ -56,7 +57,10 @@ export default class HandlerMessenger {
                 this.readMessenger.applyVelocity(idPlayer, data.velocity, data.angle);
                 break;
             case 13: // Attack
-                this.readMessenger.playerAttack(idPlayer);
+                data = msg.getData() as {
+                    angle: number;
+                };
+                this.readMessenger.playerAttack(idPlayer, data.angle);
                 break;
             default:
                 break;
@@ -81,19 +85,45 @@ export default class HandlerMessenger {
     }
 
     public sendData() {
-        let data = Manager.gI().getDataPositionAll();
-        let char = Manager.gI().getDataCharAll();
+        let datas = Manager.gI().getDataPositionAll();
+        let chars = Manager.gI().getDataCharAll();
+        let collisions = Manager.gI().getDataCollisionAll();
+        let forces = Manager.gI().getDataForceAll();
+        let attacks = Manager.gI().getDataAttackAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
             idPlayer = this.getIdPlayerByWs(ws);
             if (idPlayer && idPlayer == key) {
                 let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
                 if (idRoom) {
-                    let dataSend = data[idRoom];
+                    let dataSend = datas[idRoom];
                     for (const key in dataSend) {
-                        dataSend[key].char = char[idRoom][key];
+                        dataSend[key].char = chars[idRoom][key];
+                        dataSend[key].status = handlerStatus(
+                            collisions[idRoom][key],
+                            forces[idRoom][key]
+                        );
+                        const isAttack = attacks.get(key);
+                        if (isAttack) {
+                            dataSend[key].status = 'attack';
+                        }
                     }
                     ws.send(new Messenger(300, dataSend).toString());
+                }
+            }
+        });
+    }
+
+    public sendDataProjectile(){
+
+        let datas = Manager.gI().getDataProjectileAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom) {
+                    ws.send(new Messenger(301, datas[idRoom]).toString());
                 }
             }
         });

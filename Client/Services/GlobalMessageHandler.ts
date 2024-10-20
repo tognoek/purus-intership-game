@@ -35,14 +35,16 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
         if (this.socket) {
             let msg = Messange.fromString(data);
             let realData = msg?.getData();
-            console.log(realData)
             if (realData) {
                 switch (msg?.getId()) {
                     case 0:
                         this.readMessenger.setIdUser(realData);
                         break;
-                    case 300: 
-                        this.readMessenger.updateDataMap(realData);
+                    case 300:
+                        this.readMessenger.updateDataPlayer(realData);
+                        break;
+                    case 301:
+                        this.readMessenger.updatePoint(realData)
                         break;
                     default:
                         break;
