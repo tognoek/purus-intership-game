@@ -27,7 +27,7 @@ export default class Models{
         this.position = position;
         this.size = size;
         this.mass = mass;
-        this.margin = margin;
+        this.margin = 0;
     }
 
     public createRigidBody() :Ammo.btRigidBody {

@@ -1,4 +1,6 @@
 import Ammo from 'ammojs-typed';
+import { v4 as uuidv4 } from 'uuid';
+
 import Session from './Session';
 import Projectile from '../Entities/Projectile';
 import { rotateAroundY } from '../Utils/Math';
@@ -118,21 +120,23 @@ export default class PhysicsWorld {
             let position = rotateAroundY(
                 { x: newdata.x, y: newdata.y, z: newdata.z },
                 0,
-                4,
+                0,
                 newdata.angle
             );
-            position.y += 0.5;
-            Models.getInstance().setInfo(position, { x: 0.1, y: 0.1, z: 0.1 }, 1);
+            position.y += 0.2;
+            let time;
+            if (idChar == 0 || idChar == 3) {
+                time = 10;
+                Models.getInstance().setInfo(position, { x: 0.5, y: 0.5, z: 0.5 }, 1);
+            } else {
+                time = 3;
+                Models.getInstance().setInfo(position, { x: 1.5, y: 1.5, z: 1.5 }, 1);
+            }
             const rigidBody = Models.getInstance().createRigidBody();
             this.dynamicsWorld.addRigidBody(rigidBody);
-            const velocity = { x: 0, y: 0, z: 0 };
-            if (idChar == 0 || idChar == 3) {
-                velocity.z = -800;
-            } else {
-                velocity.z = -4;
-            }
-            this.velocity(rigidBody, velocity, newdata.angle);
-            this.projectiles.push(new Projectile(idPlayer, rigidBody, newdata.angle));
+            this.projectiles.push(
+                new Projectile(uuidv4(), idPlayer, rigidBody, idChar, newdata.angle, time)
+            );
         }
     }
 
@@ -188,7 +192,10 @@ export default class PhysicsWorld {
 
     public getRigidProjectilePosition(
         projectile: Projectile
-    ): { x: number; y: number; z: number; angle: number } | null {
+    ): { x: number; y: number; z: number; angle: number; char: number } | null {
+        if (projectile.getChar() == 1 || projectile .getChar() == 2){
+            return null;
+        }
         const rigidBody = projectile.getRigid();
         if (rigidBody) {
             const motionState = rigidBody.getMotionState();
@@ -203,6 +210,7 @@ export default class PhysicsWorld {
                     y: origin.y(),
                     z: origin.z(),
                     angle: angle ?? 180,
+                    char: projectile.getChar(),
                 };
             }
         }
@@ -218,7 +226,7 @@ export default class PhysicsWorld {
             if (!rigidBody.isActive()) {
                 rigidBody.setActivationState(1);
             }
-            const ammoForce = new this.ammo.btVector3(force.x, force.y, force.z);
+            const ammoForce = new this.ammo.btVector3(force.x, force.y * 100, force.z);
             rigidBody.applyCentralForce(ammoForce);
             this.ammo.destroy(ammoForce);
         }
@@ -296,5 +304,12 @@ export default class PhysicsWorld {
 
     public stepSimulation(timeStep: number = 1 / 30, maxSubSteps: number = 10) {
         this.dynamicsWorld.stepSimulation(timeStep, maxSubSteps);
+        this.projectiles.forEach((item) => {
+            const velocity = { x: 0, y: 0, z: -200 };
+            if (item.update()) {
+                this.velocity(item.getRigid(), velocity, item.getAngle());
+            }
+        });
+        this.projectiles = this.projectiles.filter((item) => item.isLive());
     }
 }

@@ -51,7 +51,7 @@ export default class Camera extends Entity {
         const point = rotateAroundY(targetPosition, 0, 5, this.angle);
         point.y += 1;
         Session.getInstance().game.lockAtUser(targetPositionPoint)
-        // Session.getInstance().gameCanvas?.setPositionDot(point);
+        Session.getInstance().gameCanvas?.setPositionDot(point);
     }
     public rotateVectorAroundX(dx: number) {
         if (Math.abs(dx) < this.minD / 2){

@@ -1,17 +1,19 @@
 import * as pc from 'playcanvas';
-import Camera from '../Entities/Camera';
 import Model from '../Entities/Model';
 import Player from '../Entities/Player';
 import Session from './Session';
+import Arrow from '../Entities/Arrow';
 
 export default class Game {
     private players: Map<string, Player>;
     private status: string;
     private models: Map<string, Model>;
+    private arrows: Map<string, Arrow>;
 
     constructor() {
         this.models = new Map();
         this.players = new Map();
+        this.arrows = new Map();
         this.status = 'play';
     }
 
@@ -28,6 +30,47 @@ export default class Game {
 
     public setStatus(status: string) {
         this.status = status;
+    }
+
+    public addArrow(key: string, arrow: Arrow){
+        this.arrows.set(key, arrow);
+    }
+
+    public isArrow(idArrow: string){
+        let result: boolean = false;
+        this.arrows.forEach((arrow) => {
+            if (arrow.getId() == idArrow) {
+                result = true;
+            }
+        });
+        return result;
+    }
+
+    public getArrow(id: string){
+        return this.arrows.get(id);
+    }
+
+    public destroyArrow(data: string[]){
+        let deleteArrow: Arrow[] = [];
+        this.arrows.forEach((arrow, key) => {
+            let check = false;
+            data.forEach(k => {
+                if (k == key){
+                    check = true;
+                    return;
+                }
+            })
+            if (!check){
+                deleteArrow.push(arrow);
+            }
+        })
+        const app = Session.getInstance().gameCanvas?.getApp();
+        if (!app){
+            return;
+        }
+        deleteArrow.forEach(item => {
+            app.root.removeChild(item.getEnity());
+        })
     }
 
     public addPlayer(player: Player) {

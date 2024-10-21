@@ -16,7 +16,8 @@ export default class World {
     public addPlayer(idPlayer: string) {
         Models.getInstance().setInfo(
             { x: Math.random() * 4 - 8, y: 20, z: 1 },
-            { x: 1, y: 1, z: 1 }
+            { x: 1, y: 1, z: 1 },
+            100
         );
         const rigidBody = Models.getInstance().createRigidBody();
         this.players.push(idPlayer);
@@ -92,19 +93,19 @@ export default class World {
     }
 
     public getProjectile() {
-        let result: { x: number; y: number; z: number; angle: number }[] = [];
+        let result: Record<string, { x: number; y: number; z: number; angle: number }> = {};
         const projectiles = this.physicWorld.getProjectile();
         projectiles.forEach((projectile) => {
             const data = this.physicWorld.getRigidProjectilePosition(projectile);
             if (data) {
-                result.push(data);
+                result[projectile.getId()] = data;
             }
         });
         return result;
     }
 
     public getCollisionProjectile() {
-        let result: { playerA: string; playerB: string; }[] = [];
+        let result: { playerA: string; playerB: string }[] = [];
         this.players.forEach((player) => {
             return result.push(...this.physicWorld.collisonProjectilePlayer(player));
         });

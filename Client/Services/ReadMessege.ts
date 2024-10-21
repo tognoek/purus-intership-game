@@ -4,6 +4,7 @@ import Model from '../Entities/Model';
 import Player from '../Entities/Player';
 import CreateModel from '../Script/CreateModle';
 import Session from '../Core/Session';
+import Arrow from '../Entities/Arrow';
 
 export default class ReadMessenge {
     constructor() {}
@@ -15,16 +16,24 @@ export default class ReadMessenge {
     }
 
     public updatePoint(data: object){
-        console.log(data[0])
-        // data = data as {x: number, y: number, z: number, angle: number}[];
-        // if (data.length == 0){
-        //     return;
-        // }
-        let d = data[0]
-        if (!d){
-            return;
-        }
-        Session.getInstance().gameCanvas?.setPositionDot(new pc.Vec3(d.x, d.y, d.z));
+        let dataFormat = data as {
+            [key: string]: { x: number; y: number; z: number; angle: number; char: number };
+        };
+        let keys = Object.keys(dataFormat);
+        keys.forEach(key => {
+            let position = { x: dataFormat[key].x, y: dataFormat[key].y, z: dataFormat[key].z };
+            if (Session.getInstance().game.isArrow(key)){
+                let arrow = Session.getInstance().game.getArrow(key);
+                if (arrow){
+                    arrow.setPosition(position);
+                    arrow.lookAt(position, dataFormat[key].angle);
+                }
+            }else{
+                let entity = CreateModel.getInstance(null).createArrow(position);
+                Session.getInstance().game.addArrow(key, new Arrow(key, entity));
+            }
+        });
+        Session.getInstance().game.destroyArrow(keys);
     }
 
     // public addModel

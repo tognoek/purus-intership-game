@@ -23,6 +23,10 @@ export default class CreateModel {
             Rogue: new pc.Asset('rogue', 'model', {
                 url: '../Assets/Models/rogue.glb',
             }),
+            Arrow: new pc.Asset('arrow', 'model', {
+                url: '../Assets/Models/arrow.glb',
+            }),
+
             Idle: new pc.Asset('idle', 'animation', {
                 url: '../Assets/Animations/idle_nd.glb',
             }),
@@ -59,6 +63,20 @@ export default class CreateModel {
         });
     }
 
+    public createArrow(position: { x: number; y: number; z: number }): pc.Entity {
+        const arrowEnity = new pc.Entity('arrow');
+        this.app.root.addChild(arrowEnity);
+        arrowEnity.addComponent('model', {
+            type: 'asset',
+            asset: this.assets.Arrow,
+        });
+        arrowEnity.addComponent('rigidbody', {
+            type: 'dynamic',
+        });
+        arrowEnity.setPosition(position.x, position.y, position.z);
+        return arrowEnity;
+    }
+
     public createCharacter(id: number, position: { x: number; y: number; z: number }): pc.Entity {
         let characterEntity: pc.Entity;
         let data: pc.Asset;
@@ -91,7 +109,7 @@ export default class CreateModel {
             type: 'dynamic',
         });
         characterEntity.addComponent('animation', {
-            assets: [this.assets.Idle, this.assets.Walk, attack , this.assets.Jump],
+            assets: [this.assets.Idle, this.assets.Walk, attack, this.assets.Jump],
         });
         characterEntity.setPosition(position.x, position.y, position.z);
         return characterEntity;

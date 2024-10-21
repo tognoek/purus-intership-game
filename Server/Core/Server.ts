@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getFormattedTime } from '../Utils/Time';
 import HandlerMessenger from '../Services/HandlerMessenger';
 import Messenger from '../Services/Messenger';
-import Manager from './Manager';
-
 dotenv.config();
 
 export default class Server {

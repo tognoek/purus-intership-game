@@ -22,15 +22,15 @@ export default class Input {
         switch (event.button) {
             case pc.MOUSEBUTTON_LEFT:
                 message = CreateMessege.getInstance().attack();
-                // let model = Session.getInstance().game.getModel(
-                //     Session.getInstance().getIdUser() ?? 'a'
-                // );
-                // let player = Session.getInstance().game.getPlayer(
-                //     Session.getInstance().getIdUser() ?? 'a'
-                // );
-                // if (player?.setStatus('attack')) {
-                //     model?.updateAnimation();
-                // }
+                let model = Session.getInstance().game.getModel(
+                    Session.getInstance().getIdUser() ?? 'a'
+                );
+                let player = Session.getInstance().game.getPlayer(
+                    Session.getInstance().getIdUser() ?? 'a'
+                );
+                if (player?.setStatus('attack')) {
+                    model?.updateAnimation();
+                }
                 break;
 
             default:

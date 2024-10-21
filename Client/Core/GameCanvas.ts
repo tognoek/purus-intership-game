@@ -48,7 +48,7 @@ export default class GameCanvas {
             type: 'sphere',
         });
 
-        this.dot.setLocalScale(1, 1, 1);
+        this.dot.setLocalScale(0.1, 0.1, 0.1);
         const redMaterial = new pc.StandardMaterial();
         redMaterial.emissive = new pc.Color(1, 0, 0); 
         redMaterial.useLighting = false;
@@ -58,15 +58,19 @@ export default class GameCanvas {
         }
         this.dot.setPosition(new pc.Vec3());
 
-        this.app.root.addChild(this.dot);
+        // this.app.root.addChild(this.dot);
     }
 
     public setPositionDot(position: pc.Vec3){
-        this.dot.setPosition(position);
+        // this.dot.setPosition(position);
     }
 
     public getApp(): pc.Application {
         // console.log(this.app.stats.frame.fps)
         return this.app;
+    }
+
+    public remove(item: pc.Entity){
+        this.app.root.removeChild(item);
     }
 }
