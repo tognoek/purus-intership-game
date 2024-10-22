@@ -1,5 +1,6 @@
 import Messange from '../Services/Messange';
 import Session from '../Core/Session';
+import Manager from '../Core/Manager';
 
 export default class CreateMessege {
     private static instance: CreateMessege;
@@ -11,8 +12,8 @@ export default class CreateMessege {
         return this.instance;
     }
 
-    public newRoom(idRoom: string): Messange{
-        return new Messange(0, {idRoom: idRoom});
+    public newRoom(idRoom: string): Messange {
+        return new Messange(0, { idRoom: idRoom });
     }
 
     public joinRoom(idRoom: string): Messange {
@@ -25,10 +26,10 @@ export default class CreateMessege {
     public movent(x: number, y: number, z: number) {
         return new Messange(12, {
             velocity: { x: x, y: y, z: z },
-            angle: Session.getInstance().camera?.getAngle(),
+            angle: Manager.gI().angleLockAt(),
         });
     }
     public attack() {
-        return new Messange(13, { angle: Session.getInstance().camera?.getAngle() });
+        return new Messange(13, { angle: Manager.gI().angleLockAt() });
     }
 }

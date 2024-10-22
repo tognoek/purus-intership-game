@@ -1,10 +1,11 @@
 import * as pc from 'playcanvas';
 
-import Model from '../Entities/Model';
-import Player from '../Entities/Player';
+import Model from '../Entities/Visible/Model';
+import Player from '../Entities/Invisible/Player';
 import CreateModel from '../Script/CreateModle';
 import Session from '../Core/Session';
-import Arrow from '../Entities/Arrow';
+import Arrow from '../Entities/Visible/Arrow';
+import Manager from '../Core/Manager';
 
 export default class ReadMessenge {
     constructor() {}
@@ -15,43 +16,63 @@ export default class ReadMessenge {
         Session.getInstance().setIdUser(idUser);
     }
 
-    public updatePoint(data: object){
+    public readDataUSer(data: object) {
+        let dataFormat = data as {
+            id: string;
+            name: string;
+            char: number;
+            hp: number;
+            point: number;
+            dame: number;
+        };
+        Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.point);
+    }
+
+    public updatePointArrow(data: object) {
         let dataFormat = data as {
             [key: string]: { x: number; y: number; z: number; angle: number; char: number };
         };
         let keys = Object.keys(dataFormat);
-        keys.forEach(key => {
+        keys.forEach((key) => {
             let position = { x: dataFormat[key].x, y: dataFormat[key].y, z: dataFormat[key].z };
-            if (Session.getInstance().game.isArrow(key)){
-                let arrow = Session.getInstance().game.getArrow(key);
-                if (arrow){
+            if (Manager.gI().game.isArrow(key)) {
+                let arrow = Manager.gI().game.getArrow(key);
+                if (arrow) {
                     arrow.setPosition(position);
                     arrow.lookAt(position, dataFormat[key].angle);
                 }
-            }else{
-                let entity = CreateModel.getInstance(null).createArrow(position);
-                Session.getInstance().game.addArrow(key, new Arrow(key, entity));
+            } else {
+                let entity = CreateModel.gI().createArrow(position);
+                Manager.gI().canvas.addChild(entity);
+                Manager.gI().game.addArrow(key, new Arrow(key, entity));
             }
         });
-        Session.getInstance().game.destroyArrow(keys);
+        Manager.gI().game.destroyArrow(keys);
     }
 
     // public addModel
     public updateDataPlayer(data: object) {
         let dataFormat = data as {
-            [key: string]: { x: number; y: number; z: number; angle: number; status: string, char: number };
+            [key: string]: {
+                x: number;
+                y: number;
+                z: number;
+                angle: number;
+                status: string;
+                char: number;
+            };
         };
         let keys = Object.keys(dataFormat);
         // console.log(keys)
         keys.forEach((key) => {
             let position = { x: dataFormat[key].x, y: dataFormat[key].y, z: dataFormat[key].z };
             let status = dataFormat[key].status;
-            if (Session.getInstance().game.isPlayer(key)) {
+            if (Manager.gI().game.isPlayer(key)) {
                 let model: Model | undefined;
-                model = Session.getInstance().game.getModel(key);
+                model = Manager.gI().game.getModel(key);
                 if (model) {
-                    let player = Session.getInstance().game.getPlayer(key);
-                    let user = Session.getInstance().game.getPlayer(
+                    let player = Manager.gI().game.getPlayer(key);
+                    let user = Manager.gI().game.getPlayer(
                         Session.getInstance().getIdUser() ?? 'tognoek'
                     );
                     model.setPosition(position);
@@ -65,18 +86,19 @@ export default class ReadMessenge {
                     );
                     player?.setPosition(position);
                     if (user) {
-                        Session.getInstance().camera?.update(user.getPosition());
+                        Manager.gI().camera?.update(user.getPosition());
                     }
                 }
             } else {
-                let entity = CreateModel.getInstance(null).createCharacter(dataFormat[key].char, position);
-                Session.getInstance().game.addPlayer(
+                let entity = CreateModel.gI().createCharacter(dataFormat[key].char, position);
+                Manager.gI().canvas.addChild(entity);
+                Manager.gI().game.addPlayer(
                     new Player(key, new pc.Vec3(position.x, position.y, position.z), key)
                 );
-                Session.getInstance().game.addModel(key, new Model(key, entity));
+                Manager.gI().game.addModel(key, new Model(key, entity));
             }
         });
-        Session.getInstance()
+        Manager.gI()
             .game.getPlayers()
             .forEach((player) => {
                 let id = player.getId();
@@ -88,7 +110,7 @@ export default class ReadMessenge {
                     }
                 });
                 if (!isEnable) {
-                    Session.getInstance().game.remove(id);
+                    Manager.gI().game.remove(id);
                 }
             });
     }

@@ -1,7 +1,5 @@
-import { MessageEvent } from 'ws';
 import IMessageHandler from './IMessageHandler';
 import Messange from './Messange';
-import Session from '../Core/Session';
 import ReadMessenge from './ReadMessege';
 
 // handle messages from the server
@@ -44,7 +42,10 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
                         this.readMessenger.updateDataPlayer(realData);
                         break;
                     case 301:
-                        this.readMessenger.updatePoint(realData)
+                        this.readMessenger.updatePointArrow(realData)
+                        break;
+                    case 302:
+                        this.readMessenger.readDataUSer(realData);
                         break;
                     default:
                         break;

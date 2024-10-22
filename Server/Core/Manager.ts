@@ -103,4 +103,8 @@ export default class Manager {
     public getDataProjectileAll(){
         return this.worldManager.getProjectiles();
     }
+
+    public getDataPlayerAll(){
+        return this.roomManager.getAllDataPlayer();
+    }
 }

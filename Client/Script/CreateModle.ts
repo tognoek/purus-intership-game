@@ -1,74 +1,24 @@
 import * as pc from 'playcanvas';
+import LoadData from './LoadData';
 
 export default class CreateModel {
     private static instance: CreateModel;
-    private assets;
-    private app: pc.Application;
-    private assetListLoader: pc.AssetListLoader;
-    private isLoad: boolean;
 
-    private constructor(app: pc.Application) {
-        this.app = app;
-        this.isLoad = false;
-        this.assets = {
-            Mage: new pc.Asset('mage', 'model', {
-                url: '../Assets/Models/mage.glb',
-            }),
-            Bar: new pc.Asset('bar', 'model', {
-                url: '../Assets/Models/bar.glb',
-            }),
-            Knight: new pc.Asset('knight', 'model', {
-                url: '../Assets/Models/knight.glb',
-            }),
-            Rogue: new pc.Asset('rogue', 'model', {
-                url: '../Assets/Models/rogue.glb',
-            }),
-            Arrow: new pc.Asset('arrow', 'model', {
-                url: '../Assets/Models/arrow.glb',
-            }),
-
-            Idle: new pc.Asset('idle', 'animation', {
-                url: '../Assets/Animations/idle_nd.glb',
-            }),
-            Walk: new pc.Asset('walk', 'animation', {
-                url: '../Assets/Animations/run.glb',
-            }),
-            Attack: new pc.Asset('attack', 'animation', {
-                url: '../Assets/Animations/attack.glb',
-            }),
-            Shoot: new pc.Asset('attack', 'animation', {
-                url: '../Assets/Animations/shoot.glb',
-            }),
-            Jump: new pc.Asset('jump', 'animation', {
-                url: '../Assets/Animations/jump.glb',
-            }),
-        };
-
-        this.assetListLoader = new pc.AssetListLoader(Object.values(this.assets), app.assets);
+    private constructor() {
     }
 
-    public static getInstance(app: pc.Application | null): CreateModel {
-        if (!app) {
-            return CreateModel.instance;
-        }
+    public static gI(): CreateModel {
         if (!CreateModel.instance) {
-            CreateModel.instance = new CreateModel(app);
+            CreateModel.instance = new CreateModel();
         }
         return CreateModel.instance;
     }
 
-    public load(callback: Function) {
-        this.assetListLoader.load(() => {
-            callback();
-        });
-    }
-
     public createArrow(position: { x: number; y: number; z: number }): pc.Entity {
         const arrowEnity = new pc.Entity('arrow');
-        this.app.root.addChild(arrowEnity);
         arrowEnity.addComponent('model', {
             type: 'asset',
-            asset: this.assets.Arrow,
+            asset: LoadData.gI().assets.Arrow,
         });
         arrowEnity.addComponent('rigidbody', {
             type: 'dynamic',
@@ -82,25 +32,24 @@ export default class CreateModel {
         let data: pc.Asset;
         let name: string;
         let attack: pc.Asset;
-        data = this.assets.Mage;
+        data = LoadData.gI().assets.Mage;
         name = 'mage';
-        attack = this.assets.Shoot;
+        attack = LoadData.gI().assets.Shoot;
         if (id == 1) {
-            data = this.assets.Bar;
+            data = LoadData.gI().assets.Bar;
             name = 'bar';
-            attack = this.assets.Attack;
+            attack = LoadData.gI().assets.Attack;
         }
         if (id == 2) {
-            data = this.assets.Knight;
+            data = LoadData.gI().assets.Knight;
             name = 'knight';
-            attack = this.assets.Attack;
+            attack = LoadData.gI().assets.Attack;
         }
         if (id == 3) {
-            data = this.assets.Rogue;
+            data = LoadData.gI().assets.Rogue;
             name = 'rogue';
         }
         characterEntity = new pc.Entity(name);
-        this.app.root.addChild(characterEntity);
         characterEntity.addComponent('model', {
             type: 'asset',
             asset: data,
@@ -109,7 +58,7 @@ export default class CreateModel {
             type: 'dynamic',
         });
         characterEntity.addComponent('animation', {
-            assets: [this.assets.Idle, this.assets.Walk, attack, this.assets.Jump],
+            assets: [LoadData.gI().assets.Idle, LoadData.gI().assets.Walk, attack, LoadData.gI().assets.Jump],
         });
         characterEntity.setPosition(position.x, position.y, position.z);
         return characterEntity;

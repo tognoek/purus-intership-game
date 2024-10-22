@@ -132,4 +132,22 @@ export default class RoomManager {
         }
         return result;
     }
+
+    public getAllDataPlayer() {
+        let result: Record<
+            string,
+            {
+                id: string;
+                name: string;
+                char: number;
+                hp: number;
+                point: number;
+                dame: number;
+            }
+        > = {};
+        this.rooms.forEach((room) => {
+            result = { ...result, ...room.getAllDataPlayers() };
+        });
+        return result;
+    }
 }

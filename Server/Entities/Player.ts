@@ -78,7 +78,6 @@ export default class Player {
             hp: this.hp,
             point: this.point,
             dame: this.dame,
-            status: this.status
         };
     }
 }

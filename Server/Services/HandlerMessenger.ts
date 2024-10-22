@@ -129,6 +129,20 @@ export default class HandlerMessenger {
         });
     }
 
+    public sendDataUser(){
+        let datas = Manager.gI().getDataPlayerAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom) {
+                    ws.send(new Messenger(302, datas[key]).toString());
+                }
+            }
+        })
+    }
+
     private sendDataToPlayer(client: WebSocket, msg: Messenger) {
         this.clients.forEach((idClient, wsClient) => {
             if (wsClient !== client && wsClient.readyState === WebSocket.OPEN) {

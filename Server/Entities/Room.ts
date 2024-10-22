@@ -1,25 +1,25 @@
-import Player from "../Entities/Player";
-import { generateUniqueRandomArray, randonUnique } from "../Utils/Math";
+import Player from '../Entities/Player';
+import { generateUniqueRandomArray, randonUnique } from '../Utils/Math';
 
-export default class Room{
+export default class Room {
     private id: string;
     private players: Set<Player>;
     private maxPlayer: number;
     private isChar: boolean[];
 
-    constructor(id: string){
+    constructor(id: string) {
         this.maxPlayer = 4;
         this.id = id;
         this.players = new Set();
         this.isChar = [false, false, false, false, false];
     }
 
-    public addPlayer(idPlayer: string): boolean{
-        if (this.isPlayer(idPlayer)){
+    public addPlayer(idPlayer: string): boolean {
+        if (this.isPlayer(idPlayer)) {
             return false;
         }
         const size = this.countPlayer();
-        if (size >= this.maxPlayer){
+        if (size >= this.maxPlayer) {
             return false;
         }
         const player = new Player(idPlayer, null);
@@ -30,51 +30,53 @@ export default class Room{
         return true;
     }
 
-    public getDataChar(): Record<string, number>{
+    public getDataChar(): Record<string, number> {
         let result: Record<string, number> = {};
-        for (const player of this.players){
-            result[player.getId()] = player.getChar(); 
+        for (const player of this.players) {
+            result[player.getId()] = player.getChar();
         }
         return result;
     }
-    public getPlayers(): Set<Player>{
+    public getPlayers(): Set<Player> {
         return this.players;
     }
 
-    public countPlayer(): number{
+    public countPlayer(): number {
         return this.players.size;
     }
 
-    public updateAttack(playerA: string, playerB: string){
-        const attack = this.getPlayer(playerA);
-        const victim = this.getPlayer(playerB);
-        if (attack && victim){
+    public updateAttack(playerA: string, playerB: string) {
+        const attack = this.getPlayer(playerB);
+        const victim = this.getPlayer(playerA);
+        if (attack && victim) {
             console.log(attack.getId(), victim.getId());
             const dame = attack.getDame();
             victim.updateHp(-dame);
-            attack.updatePoint(5);
+            if (victim.isDie()) {
+                attack.updatePoint(5);
+            }
         }
     }
 
-    public getPlayer(idPlayer: string){
-        for (const player of this.players){
-            if (player.getId() == idPlayer){
+    public getPlayer(idPlayer: string) {
+        for (const player of this.players) {
+            if (player.getId() == idPlayer) {
                 return player;
             }
         }
         return undefined;
     }
 
-    public isPlayer(idPlayer: string): boolean{
-        for (const player of this.players){
-            if (player.getId() == idPlayer){
+    public isPlayer(idPlayer: string): boolean {
+        for (const player of this.players) {
+            if (player.getId() == idPlayer) {
                 return true;
             }
         }
         return false;
     }
 
-    public removePlayer(id: string): boolean{
+    public removePlayer(id: string): boolean {
         for (const player of this.players) {
             if (player.getId() === id) {
                 this.isChar[player.getChar()] = false;
@@ -85,7 +87,25 @@ export default class Room{
         return false;
     }
 
-    public getId(): string{
+    public getAllDataPlayers() {
+        let result: Record<
+            string,
+            {
+                id: string;
+                name: string;
+                char: number;
+                hp: number;
+                point: number;
+                dame: number;
+            }
+        > = {};
+        this.players.forEach((player) => {
+            result[player.getId()] = player.toString();
+        });
+        return result;
+    }
+
+    public getId(): string {
         return this.id;
     }
 }

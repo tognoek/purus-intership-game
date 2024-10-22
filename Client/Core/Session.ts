@@ -1,30 +1,23 @@
-import Game from './Game';
-import GameCanvas from './GameCanvas';
-import Camera from '../Entities/Camera';
 import NetWork from './Network';
-import Player from '../Entities/Player';
+import Player from '../Entities/Invisible/Player';
 import { getLocalIP } from '../Utils/OperatingSystem';
 import Messange from '../Services/Messange';
+import Manager from './Manager';
 
 export default class Session{
-    private connected = false;
     private static instance: Session;
+
+    private connected = false;
     private netWork: NetWork;
     private host: string;
     private port: number;
     private idUser: string | null;
-    public game: Game;
-    public gameCanvas: GameCanvas | null;
-    public camera: Camera | null;
 
     private constructor() {
-        this.game = new Game();
         this.host = getLocalIP();
         this.port = 5050;
         this.netWork = new NetWork();
         this.idUser = null;
-        this.gameCanvas = null;
-        this.camera = null;
     }
 
     public static getInstance(): Session {
@@ -34,13 +27,6 @@ export default class Session{
         return Session.instance;
     }
 
-    public setCamera(camera: Camera){
-        this.camera = camera;
-    }
-
-    public setGameCanvas(gameCanvas: GameCanvas) {
-        this.gameCanvas = gameCanvas;
-    }
 
     public setIdUser(id: string) {
         this.idUser = id;
@@ -54,7 +40,7 @@ export default class Session{
         if (!this.idUser){
             return undefined
         }
-        return this.game.getPlayer(this.idUser);
+        return Manager.gI().game.getPlayer(this.idUser);
     }
 
     public isConnected(): boolean {
