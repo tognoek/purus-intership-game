@@ -2,7 +2,7 @@ import * as pc from "playcanvas";
 
 export default class LoadData{
     private static instance: LoadData;
-    public assets;
+    public assets: Record<string, any> = {};
     private app: pc.Application;
     private assetListLoader: pc.AssetListLoader;
 
@@ -24,6 +24,9 @@ export default class LoadData{
             Arrow: new pc.Asset('arrow', 'model', {
                 url: '../Assets/Models/arrow.glb',
             }),
+            Colum: new pc.Asset('colum', 'model', {
+                url: '../Assets/Models/colum.glb',
+            }),
 
             Idle: new pc.Asset('idle', 'animation', {
                 url: '../Assets/Animations/idle_nd.glb',
@@ -43,7 +46,44 @@ export default class LoadData{
             FontGamja: new pc.Asset('gamja', 'font', {
                 url: '../Assets/Fonts/courier.json',
             }),
+            enter_0: new pc.Asset('enter_0', 'texture', {
+                url: '../Assets/Keys/keyboard_99.png',
+            }),
+            enter_1: new pc.Asset('enter_1', 'texture', {
+                url: '../Assets/Keys/keyboard_200.png',
+            }),
+            back_space_0: new pc.Asset('back_space_0', 'texture', {
+                url: '../Assets/Keys/keyboard_207.png',
+            }),
+            back_space_1: new pc.Asset('back_space_1', 'texture', {
+                url: '../Assets/Keys/keyboard_214.png',
+            }),
+            gray_background_box: new pc.Asset('gray_background_box', 'texture', {
+                url: '../Assets/Texture/background.png',
+            }),
+            background_cute: new pc.Asset('background_cute', 'texture', {
+                url: '../Assets/Texture/background_cute_2nd.jpg',
+            }),
+            background_button: new pc.Asset('background_button', 'texture', {
+                url: '../Assets/Texture/background_button.png',
+            }),
+            background_brow: new pc.Asset('background_brow', 'texture', {
+                url: '../Assets/Texture/background_brow.jpg',
+            }),
+            background_text: new pc.Asset('background_text', 'texture', {
+                url: '../Assets/Texture/background_wood.png',
+            }),
         };
+        for (let i = 0; i < 10; i++) {
+            let id = `keyboard_${i}`;
+            this.assets[id] = new pc.Asset(id, 'texture', {
+                url: `../Assets/Numbers/${id}.png`,
+            });
+            id = `keyboard_${i + 101}`;
+            this.assets[id] = new pc.Asset(id, 'texture', {
+                url: `../Assets/Numbers/${id}.png`,
+            });
+        }
 
         this.assetListLoader = new pc.AssetListLoader(Object.values(this.assets), this.app.assets);
     }

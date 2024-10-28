@@ -16,8 +16,8 @@ export default class InputManager {
             this.app.keyboard.on(pc.EVENT_KEYUP, this.up);
         }
         if (this.app && this.app.mouse) {
-            // this.app.mouse.on(pc.EVENT_MOUSEDOWN, this.mouseDown);
-            // this.app.mouse.on(pc.EVENT_MOUSEMOVE, this.mouseMove);
+            this.app.mouse.on(pc.EVENT_MOUSEDOWN, this.mouseDown);
+            this.app.mouse.on(pc.EVENT_MOUSEMOVE, this.mouseMove);
         }
     }
 
@@ -29,6 +29,9 @@ export default class InputManager {
     }
 
     mouseDown(event: MouseEvent) {
+        if (Manager.gI().screen?.status != 'play'){
+            return;
+        }
         document.body.addEventListener('click', function () {
             if (!document.pointerLockElement) {
                 document.body.requestPointerLock();
@@ -97,7 +100,6 @@ export default class InputManager {
                 message = CreateMessege.getInstance().jump(0, 300, 0);
                 break;
             case pc.KEY_K:
-                Manager.gI().canvas.getAllEntities();
                 break;
             default:
                 // message = new Messange(3105, { tognoek: '3105' });

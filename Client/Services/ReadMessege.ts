@@ -28,6 +28,19 @@ export default class ReadMessenge {
         Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.point);
     }
 
+    public readDataCreateColum(data: object) {
+        const formattedArray = Object.values(data).map(({ x, y, z }) => [x, y, z]);
+        formattedArray.forEach((data) => {
+            const x = data[0];
+            const y = data[1];
+            const z = data[2];
+            if (!Manager.gI().map.isColum(x, y, z)) {
+                const entity = CreateModel.gI().createColum({ x: x, y: y, z: z });
+                Manager.gI().canvas.addChild(entity);
+            }
+        });
+    }
+
     public updatePointArrow(data: object) {
         let dataFormat = data as {
             [key: string]: { x: number; y: number; z: number; angle: number; char: number };

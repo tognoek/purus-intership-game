@@ -92,5 +92,6 @@ export default class Server {
         this.handlerMessenger.sendData();
         this.handlerMessenger.sendDataProjectile();
         this.handlerMessenger.sendDataUser();
+        this.handlerMessenger.sendAnys();
     }
 }

@@ -140,6 +140,10 @@ export default class PhysicsWorld {
         }
     }
 
+    public addBox(rigidBody: Ammo.btRigidBody){
+        this.dynamicsWorld.addRigidBody(rigidBody);
+    }
+
     public addRigidBody(idPlayer: string, rigidBody: Ammo.btRigidBody) {
         this.forces.set(idPlayer, { x: 0, y: 0, z: 0 });
         this.dynamicsWorld.addRigidBody(rigidBody);

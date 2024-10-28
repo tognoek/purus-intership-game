@@ -8,7 +8,6 @@ import Manager from '../Core/Manager';
 
 export default class GameManager {
     private players: Map<string, Player>;
-    private status: string;
     private models: Map<string, Model>;
     private arrows: Map<string, Arrow>;
 
@@ -16,11 +15,6 @@ export default class GameManager {
         this.models = new Map();
         this.players = new Map();
         this.arrows = new Map();
-        this.status = 'play';
-    }
-
-    public getStatus(): string {
-        return this.status;
     }
 
     public remove(id: string) {
@@ -29,11 +23,6 @@ export default class GameManager {
         this.models.delete(id);
         enity?.destroy();
     }
-
-    public setStatus(status: string) {
-        this.status = status;
-    }
-
     public addArrow(key: string, arrow: Arrow){
         this.arrows.set(key, arrow);
     }

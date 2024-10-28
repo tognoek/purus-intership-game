@@ -115,7 +115,6 @@ export default class HandlerMessenger {
     }
 
     public sendDataProjectile(){
-
         let datas = Manager.gI().getDataProjectileAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
@@ -124,6 +123,19 @@ export default class HandlerMessenger {
                 let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
                 if (idRoom) {
                     ws.send(new Messenger(301, datas[idRoom]).toString());
+                }
+            }
+        });
+    }
+    public sendAnys(){
+        let datas = Manager.gI().getAnyAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom) {
+                    ws.send(new Messenger(303, datas[idRoom]).toString());
                 }
             }
         });

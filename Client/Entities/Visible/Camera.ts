@@ -33,9 +33,9 @@ export default class Camera extends Entity {
     }
 
     public update(targetPosition: pc.Vec3) {
-        const targetCameraPosition = rotateAroundY(targetPosition, -2, -3, this.angle)
+        const targetCameraPosition = rotateAroundY(targetPosition, 0, -8, this.angle)
         const targetPositionPoint =  rotateAroundY(targetPosition, 0, 10, this.angle)
-        targetCameraPosition.y += (this.y + 2);
+        targetCameraPosition.y += (this.y + 3);
         targetPositionPoint.y -= 2 * this.y;
         this.camera.setPosition(targetCameraPosition);
         this.camera.lookAt(targetPositionPoint);
@@ -52,7 +52,7 @@ export default class Camera extends Entity {
             return;
         }
         this.timeX = time;
-        this.angle +=  (0.5 * (dx > 0 ? 1 : -1));
+        this.angle +=  (1 * (dx > 0 ? 1 : -1));
         if (this.angle > 360){
             this.angle -= 360;
         }

@@ -1,6 +1,7 @@
 import Camera from '../Entities/Visible/Camera';
 import CanvasManager from '../Manager/CanvasManager';
 import GameManager from '../Manager/GameManager';
+import MapManager from '../Manager/MapManager';
 import ScreenManager from '../Manager/ScreenManager';
 
 export default class Manager {
@@ -9,11 +10,13 @@ export default class Manager {
     public canvas: CanvasManager;
     public game: GameManager;
     public camera: Camera;
+    public map: MapManager;
 
     private constructor() {
         this.canvas = new CanvasManager();
         this.game = new GameManager();
         this.camera = new Camera();
+        this.map = new MapManager();
         this.canvas.addChild(this.camera.getCamera());
         this.screen = null;
     }

@@ -41,6 +41,14 @@ export default class WorldManager {
         return result;
     }
 
+    public getAnys(): Record<string, any> {
+        let result: Record<string, any> = {};
+        this.worlds.forEach((world, id) => {
+            result[id] = world.getAnys();
+        });
+        return result;
+    }
+
     public getForces(): Record<string, any> {
         let result: Record<string, any> = {};
         this.worlds.forEach((world, id) => {

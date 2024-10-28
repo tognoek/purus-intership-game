@@ -16,7 +16,7 @@ export default class GameCanvas {
         ground.addComponent('model', {
             type: 'box',
         });
-        ground.setLocalScale(150, 1, 150);
+        ground.setLocalScale(50, 1, 50);
 
         ground.addComponent('rigidbody', {
             type: 'static',

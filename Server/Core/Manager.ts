@@ -48,7 +48,7 @@ export default class Manager {
 
     public applyForce(idPlayer: string, force: { x: number; y: number; z: number }) {
         let idRoom = this.roomManager.getIdRoomByIdPlayer(idPlayer);
-        if (idRoom) {
+        if (idRoom && !this.attackManager.getAttack(idPlayer)) {
             this.worldManager.getWorld(idRoom)?.applyForce(idPlayer, force);
         }
     }
@@ -59,7 +59,7 @@ export default class Manager {
         angle: number
     ) {
         let idRoom = this.roomManager.getIdRoomByIdPlayer(idPlayer);
-        if (idRoom) {
+        if (idRoom && !this.attackManager.getAttack(idPlayer)) {
             this.worldManager.getWorld(idRoom)?.applyVelocity(idPlayer, velocity, angle);
         }
     }
@@ -84,6 +84,10 @@ export default class Manager {
 
     public getDataPositionAll(): Record<string, any> {
         return this.worldManager.getPositions();
+    }
+
+    public getAnyAll(): Record<string, any>{
+        return this.worldManager.getAnys();
     }
 
     public getDataCharAll(): Record<string, any> {

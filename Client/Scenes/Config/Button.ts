@@ -15,7 +15,31 @@ export default class Button extends pc.Entity {
             height: data.height,
             type: pc.ELEMENTTYPE_IMAGE,
             useInput: true,
-            color: new pc.Color(1, 1, 1),
         });
+    }
+
+    public setAnchorPivot(data: {anchor: number[], pivot: number[]}){
+        this.element!.anchor = data.anchor;
+        this.element!.pivot = data.pivot;
+    }
+
+    public setLocal(x: number, y: number, z: number): void {
+        this.setLocalPosition(x, y, z);
+    }
+
+    public setImage(image: pc.Asset){
+        this.element!.textureAsset = image.id;
+    }
+
+    public mouseDown(callBack: Function){
+        this.button?.on('mousedown', () => {
+            callBack();
+        })
+    }
+
+    public mouseUp(callBack: Function){
+        this.button?.on('mouseup', () => {
+            callBack();
+        })
     }
 }

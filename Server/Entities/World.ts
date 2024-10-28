@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import PhysicsWorld from '../Core/PhysicsWorld';
 import Models from './Models';
 
@@ -5,12 +8,34 @@ export default class World {
     private physicWorld: PhysicsWorld;
     private players: Array<string>;
     private projectile: Array<string>;
+    private anys: Array<{ x: number; y: number; z: number }>;
 
     constructor() {
         this.physicWorld = new PhysicsWorld();
         this.players = new Array();
         this.projectile = new Array();
+        this.anys = new Array();
         this.createGround();
+        this.loadMapData();
+    }
+
+    public loadMapData() {
+        try {
+            const filePath = path.resolve(__dirname, '../DataBase/Map/map_1.json');
+
+            const data = fs.readFileSync(filePath, 'utf8');
+            const mapData = JSON.parse(data);
+
+            mapData.boxes.forEach((box: any) => {
+                const { position, size, mass } = box;
+                Models.getInstance().setInfo(position, size, mass);
+                const boxRigidBody = Models.getInstance().createRigidBody();
+                this.anys.push(position);
+                this.physicWorld.addBox(boxRigidBody);
+            });
+        } catch (error) {
+            console.error('Không thể tải dữ liệu map:', error);
+        }
     }
 
     public addPlayer(idPlayer: string) {
@@ -53,13 +78,58 @@ export default class World {
         this.physicWorld.stepSimulation(timeStep, maxSubSteps);
     }
     private createGround() {
-        const size = { x: 1150, y: 1, z: 1150 };
-        const mass = 0;
-        Models.getInstance().setInfo({ x: 0, y: -0.5, z: 0 }, size, mass);
+        const groundSize = { x: 50, y: 1, z: 50 };
+        const groundMass = 0;
+        Models.getInstance().setInfo({ x: 0, y: -0.5, z: 0 }, groundSize, groundMass);
         const groundRigidBody = Models.getInstance().createRigidBody();
-
         this.physicWorld.addRigidBody('ground', groundRigidBody);
+        // Chiều cao và độ dày của tường
+        const wallHeight = 8;
+        const wallThickness = 1;
+        const wallMass = 0;
+
+        // Tạo các bức tường xung quanh
+        // Tường bên trái
+        Models.getInstance().setInfo(
+            { x: -groundSize.x / 2, y: wallHeight / 2, z: 0 },
+            { x: wallThickness, y: wallHeight, z: groundSize.z },
+            wallMass
+        );
+        const leftWall = Models.getInstance().createRigidBody();
+        this.physicWorld.addRigidBody('leftWall', leftWall);
+
+        // Tường bên phải
+        Models.getInstance().setInfo(
+            { x: groundSize.x / 2, y: wallHeight / 2, z: 0 },
+            { x: wallThickness, y: wallHeight, z: groundSize.z },
+            wallMass
+        );
+        const rightWall = Models.getInstance().createRigidBody();
+        this.physicWorld.addRigidBody('rightWall', rightWall);
+
+        // Tường phía trước
+        Models.getInstance().setInfo(
+            { x: 0, y: wallHeight / 2, z: -groundSize.z / 2 },
+            { x: groundSize.x, y: wallHeight, z: wallThickness },
+            wallMass
+        );
+        const frontWall = Models.getInstance().createRigidBody();
+        this.physicWorld.addRigidBody('frontWall', frontWall);
+
+        // Tường phía sau
+        Models.getInstance().setInfo(
+            { x: 0, y: wallHeight / 2, z: groundSize.z / 2 },
+            { x: groundSize.x, y: wallHeight, z: wallThickness },
+            wallMass
+        );
+        const backWall = Models.getInstance().createRigidBody();
+        this.physicWorld.addRigidBody('backWall', backWall);
     }
+
+    public getAnys() {
+        return this.anys;
+    }
+
     public getData(): Record<string, any> {
         let result: Record<string, any> = {};
         this.players.forEach((id) => {

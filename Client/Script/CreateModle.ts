@@ -26,7 +26,18 @@ export default class CreateModel {
         arrowEnity.setPosition(position.x, position.y, position.z);
         return arrowEnity;
     }
-
+    public createColum(position: { x: number; y: number; z: number }): pc.Entity {
+        const columEnity = new pc.Entity('arrow');
+        columEnity.addComponent('model', {
+            type: 'asset',
+            asset: LoadData.gI().assets.Colum,
+        });
+        columEnity.addComponent('rigidbody', {
+            type: 'dynamic',
+        });
+        columEnity.setPosition(position.x, position.y, position.z);
+        return columEnity;
+    }
     public createCharacter(id: number, position: { x: number; y: number; z: number }): pc.Entity {
         let characterEntity: pc.Entity;
         let data: pc.Asset;
