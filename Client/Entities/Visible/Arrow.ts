@@ -23,7 +23,6 @@ export default class Arrow {
 
     public lookAt(position: { x: number; y: number; z: number }, angle: number) {
         let pos = rotateAroundY(new pc.Vec3(position.x, position.y, position.z), 0, -10, angle);
-        console.log(pos, position, angle);
         this.enity.lookAt(pos);
         this.enity.setEulerAngles(90, 0, 0);
     }

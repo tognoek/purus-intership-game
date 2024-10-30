@@ -52,7 +52,7 @@ export default class Camera extends Entity {
             return;
         }
         this.timeX = time;
-        this.angle +=  (1 * (dx > 0 ? 1 : -1));
+        this.angle +=  (4 * (dx > 0 ? 1 : -1));
         if (this.angle > 360){
             this.angle -= 360;
         }

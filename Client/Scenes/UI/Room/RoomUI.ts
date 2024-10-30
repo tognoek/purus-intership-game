@@ -7,12 +7,12 @@ import ButtonBackSpace from './ButtonBackSpace';
 import Text from '../../Config/Text';
 import BackGround from '../../Config/Background';
 import LoadData from '../../../Script/LoadData';
-import Manager from '../../../Core/Manager';
+import CreateMessege from '../../../Script/CreateMessenge';
+import Session from '../../../Core/Session';
 
 export default class RoomUI implements UI {
     private numberButtons: ButtonNumber[];
     private screen: pc.Entity;
-    private is: boolean;
     private idRoom: string;
     private enter: ButtonEnter;
     private backSpace: ButtonBackSpace;
@@ -24,7 +24,6 @@ export default class RoomUI implements UI {
     constructor(screen: pc.Entity) {
         this.screen = screen;
         this.numberButtons = [];
-        this.is = false;
         this.idRoom = '';
         this.enter = new ButtonEnter();
         this.backSpace = new ButtonBackSpace();
@@ -76,7 +75,8 @@ export default class RoomUI implements UI {
         });
         this.backSpace.mouseUp(() => {});
         this.enter.mouseDown(() => {
-            Manager.gI().screen?.updateStatus('play');
+            let message = CreateMessege.getInstance().joinRoom(this.idRoom);
+            Session.getInstance().send(message);
         });
         this.enter.mouseUp(() => {});
         this.backSpace.button.setLocal(80, -80, 0);
@@ -105,10 +105,6 @@ export default class RoomUI implements UI {
     }
 
     close(): void {
-        if (!this.is) {
-            return;
-        }
-        this.is = false;
         this.numberButtons.forEach((button) => {
             button.button.enabled = false;
         });
@@ -120,10 +116,6 @@ export default class RoomUI implements UI {
         this.backSpace.button.enabled = false;
     }
     open(): void {
-        if (this.is) {
-            return;
-        }
-        this.is = true;
         this.idRoom = '';
         this.textShow.setText(this.idRoom);
         this.numberButtons.forEach((button) => {

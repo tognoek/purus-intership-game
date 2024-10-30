@@ -90,12 +90,16 @@ export default class HandlerMessenger {
         let collisions = Manager.gI().getDataCollisionAll();
         let forces = Manager.gI().getDataForceAll();
         let attacks = Manager.gI().getDataAttackAll();
+        let sizeRooms = Manager.gI().getDataSizeRoomAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
             idPlayer = this.getIdPlayerByWs(ws);
             if (idPlayer && idPlayer == key) {
                 let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
                 if (idRoom) {
+                    if (Manager.gI().getStatus(idRoom) == 0){
+                        return;
+                    }
                     let dataSend = datas[idRoom];
                     for (const key in dataSend) {
                         dataSend[key].char = chars[idRoom][key];
@@ -109,6 +113,21 @@ export default class HandlerMessenger {
                         }
                     }
                     ws.send(new Messenger(300, dataSend).toString());
+                }
+            }
+        });
+    }
+
+    public senDataRoom(){
+        let datas = Manager.gI().getDataNamePlayerAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom) {
+                    let dataSend = {idRoom: idRoom, data: datas[idRoom], max: Manager.gI().getSizeMax()}
+                    ws.send(new Messenger(304, dataSend).toString());
                 }
             }
         });

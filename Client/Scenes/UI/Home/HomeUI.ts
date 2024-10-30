@@ -6,10 +6,11 @@ import LoadData from '../../../Script/LoadData';
 import TextBasic from '../../Config/TextBasic';
 import ButtonText from '../../Config/ButtonText';
 import Manager from '../../../Core/Manager';
+import CreateMessege from '../../../Script/CreateMessenge';
+import Session from '../../../Core/Session';
 
 export default class HomeUI implements UI {
     private screen: pc.Entity;
-    private is: boolean;
     private textShow: TextBasic | null;
     private background: BackGround | null;
     private newRoom: ButtonText | null;
@@ -17,11 +18,11 @@ export default class HomeUI implements UI {
 
     constructor(screen: pc.Entity) {
         this.screen = screen;
-        this.is = false;
         this.textShow = null;
         this.background = null;
         this.newRoom = null;
         this.joinRoom = null;
+        this.init();
     }
 
     private init() {
@@ -40,9 +41,12 @@ export default class HomeUI implements UI {
         this.newRoom.button.setLocal(-180, 0, 0);
         this.joinRoom.button.setLocal(180, 0, 0);
         this.joinRoom.mouseDown(() => {
-            Manager.gI().screen?.updateStatus('room')
+            Manager.gI().screen?.updateStatus('room');
         });
-
+        this.newRoom.mouseDown(() => {
+            let message = CreateMessege.getInstance().newRoom('Tớ tạo Room mới!');
+            Session.getInstance().send(message);
+        });
         this.screen.addChild(this.background);
         this.screen.addChild(this.textShow);
         this.screen.addChild(this.newRoom.button);
@@ -50,21 +54,12 @@ export default class HomeUI implements UI {
     }
 
     close(): void {
-        if (!this.is) {
-            return;
-        }
-        this.is = false;
         this.background!.enabled = false;
         this.textShow!.enabled = false;
         this.joinRoom!.button!.enabled = false;
         this.newRoom!.button!.enabled = false;
     }
     open(): void {
-        if (this.is) {
-            return;
-        }
-        this.init();
-        this.is = true;
         this.background!.enabled = true;
         this.textShow!.enabled = true;
         this.joinRoom!.button!.enabled = true;

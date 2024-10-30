@@ -40,15 +40,20 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
                         break;
                     case 300:
                         this.readMessenger.updateDataPlayer(realData);
+                        // console.log(realData)
                         break;
                     case 301:
                         this.readMessenger.updatePointArrow(realData);
                         break;
                     case 302:
                         this.readMessenger.readDataUSer(realData);
+                        // console.log(realData)
                         break;
                     case 303:
                         this.readMessenger.readDataCreateColum(realData);
+                        break;
+                    case 304:
+                        this.readMessenger.readDataRoom(realData);
                         break;
                     default:
                         break;

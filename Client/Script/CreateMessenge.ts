@@ -12,8 +12,8 @@ export default class CreateMessege {
         return this.instance;
     }
 
-    public newRoom(idRoom: string): Messange {
-        return new Messange(0, { idRoom: idRoom });
+    public newRoom(id: string): Messange {
+        return new Messange(0, { idRoom: id });
     }
 
     public joinRoom(idRoom: string): Messange {

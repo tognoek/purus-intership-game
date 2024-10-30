@@ -7,11 +7,21 @@ export default class Room {
     private maxPlayer: number;
     private isChar: boolean[];
 
-    constructor(id: string) {
-        this.maxPlayer = 4;
+    constructor(id: string, max: number) {
+        this.maxPlayer = max;
         this.id = id;
         this.players = new Set();
         this.isChar = [false, false, false, false, false];
+    }
+
+    public getStatus(){
+        let reslut: number;
+        if (this.players.size < this.maxPlayer){
+            reslut = 0;
+        }else{
+            reslut = 1;
+        }
+        return reslut;
     }
 
     public addPlayer(idPlayer: string): boolean {
@@ -103,6 +113,14 @@ export default class Room {
             result[player.getId()] = player.toString();
         });
         return result;
+    }
+
+    public getNamePLayers(){
+        let reslut: string[] = [];
+        this.players.forEach(player => {
+            reslut.push(player.getName());
+        })
+        return reslut;
     }
 
     public getId(): string {

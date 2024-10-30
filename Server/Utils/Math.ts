@@ -41,3 +41,15 @@ export function randonUnique(is: boolean[], size: number) {
     }
     return result;
 }
+
+export default function generateSevenDigitNumber(): number {
+    const firstDigit = Math.floor(Math.random() * 9) + 1;
+
+    let remainingDigits = '';
+    for (let i = 0; i < 6; i++) {
+        remainingDigits += Math.floor(Math.random() * 10);
+    }
+
+    const sevenDigitNumber = parseInt(`${firstDigit}${remainingDigits}`, 10);
+    return sevenDigitNumber;
+}

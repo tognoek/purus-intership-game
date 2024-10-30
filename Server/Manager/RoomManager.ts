@@ -4,9 +4,12 @@ import Room from '../Entities/Room';
 export default class RoomManager {
     private rooms: Set<Room>;
     private isRoom: Map<string, boolean>;
+    public maxSize: number;
+
     constructor() {
         this.rooms = new Set();
         this.isRoom = new Map();
+        this.maxSize = 1;
     }
 
     public checkRoom(id: string) {
@@ -14,7 +17,7 @@ export default class RoomManager {
     }
     public newRoom(id: string) {
         this.isRoom.set(id, true);
-        this.rooms.add(new Room(id));
+        this.rooms.add(new Room(id, this.maxSize));
     }
 
     public getRoom(id: string): Room | null {
@@ -125,10 +128,35 @@ export default class RoomManager {
         });
     }
 
+    public getStatus(id: string){
+        for (const room of this.rooms){
+            if (room.getId() == id){
+                return room.getStatus();
+            }
+        }
+        return -1;
+    }
+
     public getDataChars(): Record<string, any> {
         let result: Record<string, any> = {};
         for (const room of this.rooms) {
             result[room.getId()] = room.getDataChar();
+        }
+        return result;
+    }
+
+    public getDataSizeRooms(): Record<string, number>{
+        let result: Record<string, number> = {};
+        for (const room of this.rooms) {
+            result[room.getId()] = room.countPlayer();
+        }
+        return result;
+    }
+
+    public getDataNamePlayer(){
+        let result: Record<string, any> = {};
+        for (const room of this.rooms){
+            result[room.getId()] = room.getNamePLayers();
         }
         return result;
     }

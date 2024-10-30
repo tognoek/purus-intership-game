@@ -70,8 +70,17 @@ export default class LoadData{
             background_brow: new pc.Asset('background_brow', 'texture', {
                 url: '../Assets/Texture/background_brow.jpg',
             }),
+            ground: new pc.Asset('ground', 'texture', {
+                url: '../Assets/Texture/ground.jpg',
+            }),
             background_text: new pc.Asset('background_text', 'texture', {
                 url: '../Assets/Texture/background_wood.png',
+            }),
+            box_health: new pc.Asset('box_health', 'texture',{
+                url: '../Assets/Icon/box_health.png',
+            }),
+            health: new pc.Asset('health', 'texture',{
+                url: '../Assets/Icon/health.png',
             }),
         };
         for (let i = 0; i < 10; i++) {

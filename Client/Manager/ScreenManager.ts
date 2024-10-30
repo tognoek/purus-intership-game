@@ -5,6 +5,7 @@ import RoomUI from '../Scenes/UI/Room/RoomUI';
 import HomeUI from '../Scenes/UI/Home/HomeUI';
 import UI from '../Scenes/UI/InterfaceUI';
 import PlayUI from '../Scenes/UI/Play/PlayUI';
+import LobbyUI from '../Scenes/UI/Lobby/Lobby';
 
 export default class ScreenManager {
     public status: string;
@@ -13,6 +14,7 @@ export default class ScreenManager {
     private roomUI: UI;
     private homeUI: UI;
     private playUI: UI;
+    private lobbyUI: UI;
 
     constructor() {
         this.screen = new pc.Entity();
@@ -26,7 +28,8 @@ export default class ScreenManager {
         this.roomUI = new RoomUI(this.screen);
         this.homeUI = new HomeUI(this.screen);
         this.playUI = new PlayUI(this.screen);
-        this.listUI = [this.roomUI, this.homeUI];
+        this.lobbyUI = new LobbyUI(this.screen);
+        this.listUI = [this.roomUI, this.homeUI, this.playUI, this.lobbyUI];
         Manager.gI().canvas.addChild(this.screen);
         this.updateStatus('home');
     }
@@ -41,8 +44,6 @@ export default class ScreenManager {
         this.listUI.forEach((ui) => {
             ui.close();
         });
-        Manager.gI().getApp().render();
-        Manager.gI().getApp().resizeCanvas();
     }
     private updateScreen() {
         this.closeAll();
@@ -54,7 +55,11 @@ export default class ScreenManager {
                 this.roomUI.open();
                 break;
             case 'play':
+                console.log('play')
                 this.playUI.open();
+                break;
+            case 'lobby':
+                this.lobbyUI.open();
                 break;
             default:
                 this.homeUI.open();
@@ -62,8 +67,19 @@ export default class ScreenManager {
         }
     }
 
-    public updateHpPoint(hp: number, point: number) {
-        // this.play.updateHp(hp);
-        // this.play.updatePoint(point);
+    public updateDataInLobby(id: string, size: number, max: number){
+        (this.lobbyUI as LobbyUI).setText(id, size, max);
+    }
+
+    public updateHpPoint(hp: number, hpMax: number, score: number) {
+        (this.playUI as PlayUI).setData(hp, hpMax, score);
+    }
+
+    public updateIdRoom(id: string) {
+        (this.playUI as PlayUI).setIdRoom(id);
+    }
+
+    public lightLockAt(position: pc.Vec3){
+        (this.playUI as PlayUI).setLockAt(position);
     }
 }

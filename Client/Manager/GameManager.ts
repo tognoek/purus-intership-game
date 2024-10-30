@@ -100,6 +100,7 @@ export default class GameManager {
         let user = Session.getInstance().getIdUser();
         if (user) {
             this.models.get(user)?.lookAt(position);
+            Manager.gI().screen?.lightLockAt(position);
         }
     }
 }

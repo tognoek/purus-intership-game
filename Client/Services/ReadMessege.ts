@@ -22,10 +22,22 @@ export default class ReadMessenge {
             name: string;
             char: number;
             hp: number;
+            hpMax: number,
             point: number;
             dame: number;
         };
-        Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.point);
+        Manager.gI().screen?.updateHpPoint(dataFormat.hp,dataFormat.hpMax, dataFormat.point);
+    }
+
+    public readDataRoom(data: object){
+        let dataFormat = data as {idRoom: string, data: string[], max: number};
+        if (dataFormat.data.length < dataFormat.max){
+            Manager.gI().screen?.updateStatus('lobby');
+            Manager.gI().screen?.updateDataInLobby(dataFormat.idRoom, dataFormat.data.length, dataFormat.max);
+        }else{
+            Manager.gI().screen?.updateStatus('play');
+            Manager.gI().screen?.updateIdRoom(dataFormat.idRoom);
+        }
     }
 
     public readDataCreateColum(data: object) {

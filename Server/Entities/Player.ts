@@ -5,24 +5,20 @@ export default class Player {
     private point: number;
     private dame: number;
     private idChar: number;
-    private status: string;
+    private maxHp: number;
 
     constructor(id: string, name: string | null) {
         this.id = id;
         this.name = name ?? this.id;
-        this.hp = 100;
+        this.maxHp = 100;
+        this.hp = this.maxHp;;
         this.point = 0;
         this.dame = 10;
         this.idChar = 0;
-        this.status = 'idle';
     }
 
     public isDie(){
         return this.hp < 1;
-    }
-
-    public setStatus(status: string) {
-        this.status = status;
     }
 
     public setChar(id: number) {
@@ -35,6 +31,13 @@ export default class Player {
 
     public updateHp(hp: number) {
         this.hp += hp;
+    }
+
+    public healing(hp: number){
+        this.hp += hp;
+        if (this.hp > this.maxHp){
+            this.hp = this.maxHp;
+        }
     }
 
     public getHp(): number {
@@ -75,6 +78,7 @@ export default class Player {
             id: this.id,
             name: this.name,
             char: this.idChar,
+            hpMax: this.maxHp,
             hp: this.hp,
             point: this.point,
             dame: this.dame,

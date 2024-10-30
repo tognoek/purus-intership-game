@@ -1,5 +1,4 @@
 import Manager from '../Core/Manager';
-import Session from '../Core/Session';
 import Messenger from './Messenger';
 
 export default class ReadMessenger {
@@ -7,9 +6,10 @@ export default class ReadMessenger {
         // new Read Messenger
     }
 
-    public newRoom(msg: Messenger){
-        const idRoom = (msg.getData() as { idRoom?: string })?.idRoom;
-        Manager.gI().newRoom(idRoom!);
+    public newRoom(msg: Messenger) {
+        // const idRoom = (msg.getData() as { idRoom?: string })?.idRoom;
+        let user = msg.getUser();
+        Manager.gI().newRoom(user!);
     }
 
     public joinRoom(msg: Messenger) {
@@ -30,8 +30,8 @@ export default class ReadMessenger {
         Manager.gI().applyVelocity(idPlayer, velocity, angle);
     }
 
-    public playerAttack(idPlayer: string, angle: number){
-        this.applyVelocity(idPlayer, {x: 0, y: 0, z: 0}, angle);
+    public playerAttack(idPlayer: string, angle: number) {
+        this.applyVelocity(idPlayer, { x: 0, y: 0, z: 0 }, angle);
         Manager.gI().attack(idPlayer);
     }
 }
