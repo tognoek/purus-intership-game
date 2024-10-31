@@ -41,8 +41,8 @@ export default class InputManager {
         switch (event.button) {
             case pc.MOUSEBUTTON_LEFT:
                 message = CreateMessege.getInstance().attack();
-                let model = Manager.gI().game.getModel(Session.getInstance().getIdUser() ?? 'a');
-                let player = Manager.gI().game.getPlayer(Session.getInstance().getIdUser() ?? 'a');
+                let model = Manager.gI().game.getModel(Session.gI().getIdUser() ?? 'a');
+                let player = Manager.gI().game.getPlayer(Session.gI().getIdUser() ?? 'a');
                 if (player?.setStatus('attack')) {
                     model?.updateAnimation();
                 }
@@ -52,7 +52,7 @@ export default class InputManager {
                 break;
         }
         if (message) {
-            Session.getInstance().send(message);
+            Session.gI().send(message);
         }
     }
 
@@ -70,7 +70,7 @@ export default class InputManager {
                 break;
         }
         if (message) {
-            Session.getInstance().send(message);
+            Session.gI().send(message);
         }
     }
 
@@ -106,7 +106,7 @@ export default class InputManager {
                 break;
         }
         if (message) {
-            Session.getInstance().send(message);
+            Session.gI().send(message);
         }
     }
 }

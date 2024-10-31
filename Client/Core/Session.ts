@@ -20,13 +20,12 @@ export default class Session{
         this.idUser = null;
     }
 
-    public static getInstance(): Session {
+    public static gI(): Session {
         if (!Session.instance) {
             Session.instance = new Session();
         }
         return Session.instance;
     }
-
 
     public setIdUser(id: string) {
         this.idUser = id;

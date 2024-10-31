@@ -45,7 +45,7 @@ export default class HomeUI implements UI {
         });
         this.newRoom.mouseDown(() => {
             let message = CreateMessege.getInstance().newRoom('Tớ tạo Room mới!');
-            Session.getInstance().send(message);
+            Session.gI().send(message);
         });
         this.screen.addChild(this.background);
         this.screen.addChild(this.textShow);

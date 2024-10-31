@@ -13,7 +13,7 @@ export default class ReadMessenge {
     public setIdUser(data: object) {
         let dataFormat = data as { [key: string]: string };
         let idUser = dataFormat['id'];
-        Session.getInstance().setIdUser(idUser);
+        Session.gI().setIdUser(idUser);
     }
 
     public readDataUSer(data: object) {
@@ -22,22 +22,33 @@ export default class ReadMessenge {
             name: string;
             char: number;
             hp: number;
-            hpMax: number,
+            hpMax: number;
             point: number;
             dame: number;
         };
-        Manager.gI().screen?.updateHpPoint(dataFormat.hp,dataFormat.hpMax, dataFormat.point);
+        Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.hpMax, dataFormat.point);
     }
 
-    public readDataRoom(data: object){
-        let dataFormat = data as {idRoom: string, data: string[], max: number};
-        if (dataFormat.data.length < dataFormat.max){
-            Manager.gI().screen?.updateStatus('lobby');
-            Manager.gI().screen?.updateDataInLobby(dataFormat.idRoom, dataFormat.data.length, dataFormat.max);
-        }else{
+    public readDataTime(data: object) {
+        let dataFormat = data as {idRoom: string, id: string; time: number };
+        if (dataFormat.id == '-1' || dataFormat.id == '4') {
+            return;
+        }
+        if (dataFormat.id == '1'){
             Manager.gI().screen?.updateStatus('play');
             Manager.gI().screen?.updateIdRoom(dataFormat.idRoom);
         }
+        console.log(dataFormat);
+    }
+
+    public readDataRoom(data: object) {
+        let dataFormat = data as { idRoom: string; data: string[]; max: number };
+        Manager.gI().screen?.updateStatus('lobby');
+        Manager.gI().screen?.updateDataInLobby(
+            dataFormat.idRoom,
+            dataFormat.data.length,
+            dataFormat.max
+        );
     }
 
     public readDataCreateColum(data: object) {
@@ -98,7 +109,7 @@ export default class ReadMessenge {
                 if (model) {
                     let player = Manager.gI().game.getPlayer(key);
                     let user = Manager.gI().game.getPlayer(
-                        Session.getInstance().getIdUser() ?? 'tognoek'
+                        Session.gI().getIdUser() ?? 'tognoek'
                     );
                     model.setPosition(position);
                     if (player?.setStatus(status)) {

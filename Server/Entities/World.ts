@@ -38,14 +38,72 @@ export default class World {
         }
     }
 
+    private isArea(
+        data: { x: number; y: number; z: number },
+        area: { x: number; y: number; z: number; w: number; h: number }
+    ) {
+        return (
+            data.x >= area.x &&
+            data.x <= area.x + area.w &&
+            data.z >= area.z &&
+            data.z <= area.z + area.h
+        );
+    }
+
+    private getPositionFree() {
+        let players = this.getData();
+        const areas = [
+            { x: -23, y: 1, z: -23},
+            { x: 0, y: 1, z: -23 },
+            { x: -23, y: 1, z: 0 },
+            { x: 0, y: 1, z: 0 },
+        ];
+        const result = [
+            { x: -23, y: 1, z: -23 },
+            { x: 23, y: 1, z: -23 },
+            { x: -23, y: 1, z: 23 },
+            { x: 23, y: 1, z: 23 },
+        ];
+        const is = [true, true, true, true];
+
+        for (const id in players) {
+            const data = { x: players[id].x, y: players[id].y, z: players[id].z };
+            for (let index = 0; index < 4; index++){
+                if (this.isArea(data, {x: areas[index].x, y: areas[index].y, z: areas[index].z, w: 23, h: 23})){
+                    is[index] = false;
+                }
+            }
+        }
+        for (let index = 0; index < 4; index++){
+            if (is[index]){
+                return result[index];
+            }
+        }
+        return {x: 0, y: 1, z: 0}
+    }
+
     public addPlayer(idPlayer: string) {
+        const position = this.getPositionFree();
+        console.log(position);
         Models.getInstance().setInfo(
-            { x: Math.random() * 4 - 8, y: 20, z: 1 },
+            position,
             { x: 1, y: 1, z: 1 },
             100
         );
         const rigidBody = Models.getInstance().createRigidBody();
         this.players.push(idPlayer);
+        this.physicWorld.addRigidBody(idPlayer, rigidBody);
+    }
+
+    public resetPlayer(idPlayer: string){
+        this.physicWorld.removeRigidBody(idPlayer);
+        const position = this.getPositionFree()
+        Models.getInstance().setInfo(
+            position,
+            { x: 1, y: 1, z: 1 },
+            100
+        );
+        const rigidBody = Models.getInstance().createRigidBody();
         this.physicWorld.addRigidBody(idPlayer, rigidBody);
     }
 
@@ -130,8 +188,8 @@ export default class World {
         return this.anys;
     }
 
-    public getData(): Record<string, any> {
-        let result: Record<string, any> = {};
+    public getData(): Record<string, { x: number; y: number; z: number; angle: number }> {
+        let result: Record<string, { x: number; y: number; z: number; angle: number }> = {};
         this.players.forEach((id) => {
             let position = this.physicWorld.getRigidBodyPosition(id);
             if (position) {

@@ -107,6 +107,25 @@ export default class PhysicsWorld {
         );
     }
 
+    public setPosition(idPlayer: string, newPosX:number, newPosY:number, newPosZ:number) {
+        const rigidBody = this.getRigidBodyById(idPlayer);
+        if (!rigidBody) {
+            return;
+        }
+        const transform = new Ammo.btTransform();
+        transform.setIdentity(); 
+        transform.setOrigin(new Ammo.btVector3(newPosX, newPosY, newPosZ)); 
+
+        rigidBody.setWorldTransform(transform);
+
+        const motionState = rigidBody.getMotionState();
+        if (motionState) {
+            motionState.setWorldTransform(transform);
+        }
+
+        Ammo.destroy(transform);
+    }
+
     public getProjectile() {
         return this.projectiles;
     }
@@ -140,7 +159,7 @@ export default class PhysicsWorld {
         }
     }
 
-    public addBox(rigidBody: Ammo.btRigidBody){
+    public addBox(rigidBody: Ammo.btRigidBody) {
         this.dynamicsWorld.addRigidBody(rigidBody);
     }
 
@@ -197,7 +216,7 @@ export default class PhysicsWorld {
     public getRigidProjectilePosition(
         projectile: Projectile
     ): { x: number; y: number; z: number; angle: number; char: number } | null {
-        if (projectile.getChar() == 1 || projectile .getChar() == 2){
+        if (projectile.getChar() == 1 || projectile.getChar() == 2) {
             return null;
         }
         const rigidBody = projectile.getRigid();

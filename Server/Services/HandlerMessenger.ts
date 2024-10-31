@@ -97,43 +97,27 @@ export default class HandlerMessenger {
             if (idPlayer && idPlayer == key) {
                 let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
                 if (idRoom) {
-                    if (Manager.gI().getStatus(idRoom) == 0){
-                        return;
-                    }
-                    let dataSend = datas[idRoom];
-                    for (const key in dataSend) {
-                        dataSend[key].char = chars[idRoom][key];
-                        dataSend[key].status = handlerStatus(
-                            collisions[idRoom][key],
-                            forces[idRoom][key]
-                        );
-                        const isAttack = attacks.get(key);
-                        if (isAttack) {
-                            dataSend[key].status = 'attack';
+                    if (Manager.gI().getStatus(idRoom) == 'play') {
+                        let dataSend = datas[idRoom];
+                        for (const key in dataSend) {
+                            dataSend[key].char = chars[idRoom][key];
+                            dataSend[key].status = handlerStatus(
+                                collisions[idRoom][key],
+                                forces[idRoom][key]
+                            );
+                            const isAttack = attacks.get(key);
+                            if (isAttack) {
+                                dataSend[key].status = 'attack';
+                            }
                         }
+                        ws.send(new Messenger(300, dataSend).toString());
                     }
-                    ws.send(new Messenger(300, dataSend).toString());
                 }
             }
         });
     }
 
-    public senDataRoom(){
-        let datas = Manager.gI().getDataNamePlayerAll();
-        this.clients.forEach((key, ws) => {
-            let idPlayer: string | undefined;
-            idPlayer = this.getIdPlayerByWs(ws);
-            if (idPlayer && idPlayer == key) {
-                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
-                if (idRoom) {
-                    let dataSend = {idRoom: idRoom, data: datas[idRoom], max: Manager.gI().getSizeMax()}
-                    ws.send(new Messenger(304, dataSend).toString());
-                }
-            }
-        });
-    }
-
-    public sendDataProjectile(){
+    public sendDataProjectile() {
         let datas = Manager.gI().getDataProjectileAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
@@ -146,7 +130,7 @@ export default class HandlerMessenger {
             }
         });
     }
-    public sendAnys(){
+    public sendAnys() {
         let datas = Manager.gI().getAnyAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
@@ -160,7 +144,7 @@ export default class HandlerMessenger {
         });
     }
 
-    public sendDataUser(){
+    public sendDataUser() {
         let datas = Manager.gI().getDataPlayerAll();
         this.clients.forEach((key, ws) => {
             let idPlayer: string | undefined;
@@ -171,7 +155,42 @@ export default class HandlerMessenger {
                     ws.send(new Messenger(302, datas[key]).toString());
                 }
             }
-        })
+        });
+    }
+    public senDataRoom() {
+        let datas = Manager.gI().getDataNamePlayerAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom && Manager.gI().getStatus(idRoom) == 'lobby') {
+                    let dataSend = {
+                        idRoom: idRoom,
+                        data: datas[idRoom],
+                        max: Manager.gI().getSizeMax(),
+                    };
+                    ws.send(new Messenger(304, dataSend).toString());
+                }
+            }
+        });
+    }
+    public senDataTime() {
+        let datas = Manager.gI().getDataTimeAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom) {
+                    let dataSend = {
+                        idRoom: idRoom,
+                        ...datas[idRoom],
+                    };
+                    ws.send(new Messenger(305, dataSend).toString());
+                }
+            }
+        });
     }
 
     private sendDataToPlayer(client: WebSocket, msg: Messenger) {

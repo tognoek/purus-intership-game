@@ -55,7 +55,6 @@ export default class ScreenManager {
                 this.roomUI.open();
                 break;
             case 'play':
-                console.log('play')
                 this.playUI.open();
                 break;
             case 'lobby':

@@ -9,7 +9,7 @@ export default class RoomManager {
     constructor() {
         this.rooms = new Set();
         this.isRoom = new Map();
-        this.maxSize = 1;
+        this.maxSize = 3;
     }
 
     public checkRoom(id: string) {
@@ -40,6 +40,22 @@ export default class RoomManager {
         return null;
     }
 
+    public getRoomEnd(): string[] {
+        let result: string[] = [];
+        this.rooms.forEach((room) => {
+            if (room.getStatus() == 'lock') {
+                result.push(room.getId());
+            }
+        });
+        return result;
+    }
+    public revivePlayer(idPlayer: string) {
+        for (const room of this.rooms) {
+            if (room.isPlayer(idPlayer)) {
+                room.revivePlayer(idPlayer);
+            }
+        }
+    }
     public getIdRoomByIdPlayer(idPlayer: string): string | null {
         for (const room of this.rooms) {
             if (room.isPlayer(idPlayer)) {
@@ -113,6 +129,12 @@ export default class RoomManager {
         }
     }
 
+    public update() {
+        this.rooms.forEach((room) => {
+            room.update();
+        });
+    }
+
     public clear(): void {
         const Rommdelete: Room[] = [];
 
@@ -128,13 +150,21 @@ export default class RoomManager {
         });
     }
 
-    public getStatus(id: string){
-        for (const room of this.rooms){
-            if (room.getId() == id){
+    public getStatus(id: string) {
+        for (const room of this.rooms) {
+            if (room.getId() == id) {
                 return room.getStatus();
             }
         }
         return -1;
+    }
+
+    public getPlayerDies() {
+        let result: Record<string, string[]> = {};
+        this.rooms.forEach((room) => {
+            result[room.getId()] = room.getPlayerDie();
+        });
+        return result;
     }
 
     public getDataChars(): Record<string, any> {
@@ -145,7 +175,7 @@ export default class RoomManager {
         return result;
     }
 
-    public getDataSizeRooms(): Record<string, number>{
+    public getDataSizeRooms(): Record<string, number> {
         let result: Record<string, number> = {};
         for (const room of this.rooms) {
             result[room.getId()] = room.countPlayer();
@@ -153,9 +183,9 @@ export default class RoomManager {
         return result;
     }
 
-    public getDataNamePlayer(){
+    public getDataNamePlayer() {
         let result: Record<string, any> = {};
-        for (const room of this.rooms){
+        for (const room of this.rooms) {
             result[room.getId()] = room.getNamePLayers();
         }
         return result;
@@ -168,6 +198,7 @@ export default class RoomManager {
                 id: string;
                 name: string;
                 char: number;
+                hpMax: number;
                 hp: number;
                 point: number;
                 dame: number;
@@ -175,6 +206,28 @@ export default class RoomManager {
         > = {};
         this.rooms.forEach((room) => {
             result = { ...result, ...room.getAllDataPlayers() };
+        });
+        return result;
+    }
+    public getAllDataTime() {
+        let result: Record<string,{id: string, time: number}> = {};
+        this.rooms.forEach((room) => {
+            result[room.getId()] = room.getDataTime();
+        });
+        return result;
+    }
+    public getAllDataScore() {
+        let result: Record<
+            string,
+            {
+                id: string;
+                name: string;
+                char: number;
+                point: number;
+            }
+        > = {};
+        this.rooms.forEach((room) => {
+            result = { ...result, ...room.getAllDataScore() };
         });
         return result;
     }

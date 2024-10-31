@@ -6,22 +6,77 @@ export default class Room {
     private players: Set<Player>;
     private maxPlayer: number;
     private isChar: boolean[];
+    private timeBegin: number;
+    private timePlay: number;
+    private timeEnd: number;
+    private status: string;
+    private idTimeClear: NodeJS.Timeout | null;
 
     constructor(id: string, max: number) {
         this.maxPlayer = max;
         this.id = id;
         this.players = new Set();
         this.isChar = [false, false, false, false, false];
+        this.timePlay = 10; // 5,
+        this.timeBegin = 5; // 5s
+        this.timeEnd = 15; // 10s
+        this.status = 'create';
+        this.idTimeClear = null;
+    }
+
+    public update(){
+        const oldStatus = this.status;
+        if (this.status == 'create'){
+            if (this.players.size < this.maxPlayer){
+                this.setStatus('lobby');
+            }
+        }
+        if (this.status == 'lobby'){
+            if (this.players.size == this.maxPlayer){
+                this.setStatus('begin');
+            }
+        }
+        if (oldStatus == 'lobby' && this.status == 'begin'){
+            if (this.idTimeClear){
+                clearInterval(this.idTimeClear);
+            }
+            this.idTimeClear = setInterval(() => {
+                this.timeBegin -= 1;
+            }, 1000);
+        }
+        if (this.status == 'begin' && this.timeBegin < 0){
+            if (this.idTimeClear){
+                clearInterval(this.idTimeClear);
+            }
+            this.setStatus('play')
+            this.idTimeClear = setInterval(() => {
+                this.timePlay -= 1;
+            }, 1000);
+        }
+        if (this.status == 'play' && this.timePlay < 0){
+            if (this.idTimeClear){
+                clearInterval(this.idTimeClear);
+            }
+            this.setStatus('end')
+            this.idTimeClear = setInterval(() => {
+                this.timeEnd -= 1;
+            }, 1000);
+        }
+        if (this.status == 'end' && this.timeEnd < 0){
+            if (this.idTimeClear){
+                clearInterval(this.idTimeClear);
+            }
+            this.setStatus('lock')
+        }
+    }
+
+    private setStatus(status: string){
+        this.status = status;
     }
 
     public getStatus(){
-        let reslut: number;
-        if (this.players.size < this.maxPlayer){
-            reslut = 0;
-        }else{
-            reslut = 1;
-        }
-        return reslut;
+        // console.log(this.timeBegin, this.timePlay, this.timeEnd);
+        return this.status;
     }
 
     public addPlayer(idPlayer: string): boolean {
@@ -68,6 +123,14 @@ export default class Room {
         }
     }
 
+    public revivePlayer(idPlayer: string){
+        const player = this.getPlayer(idPlayer);
+        if (!player){
+            return;
+        }
+        player.revive();
+    }
+
     public getPlayer(idPlayer: string) {
         for (const player of this.players) {
             if (player.getId() == idPlayer) {
@@ -97,6 +160,16 @@ export default class Room {
         return false;
     }
 
+    public getPlayerDie(): string[]{
+        let reslut: string[] = [];
+        this.players.forEach(player => {
+            if (player.isDie()){
+                reslut.push(player.getId());
+            }
+        })
+        return reslut;
+    }
+
     public getAllDataPlayers() {
         let result: Record<
             string,
@@ -104,6 +177,7 @@ export default class Room {
                 id: string;
                 name: string;
                 char: number;
+                hpMax: number;
                 hp: number;
                 point: number;
                 dame: number;
@@ -114,13 +188,46 @@ export default class Room {
         });
         return result;
     }
-
+    public getAllDataScore() {
+        let result: Record<
+            string,
+            {
+                id: string;
+                name: string;
+                char: number;
+                point: number;
+            }
+        > = {};
+        this.players.forEach((player) => {
+            result[player.getId()] = player.score();
+        });
+        return result;
+    }
     public getNamePLayers(){
         let reslut: string[] = [];
         this.players.forEach(player => {
             reslut.push(player.getName());
         })
         return reslut;
+    }
+
+    public getDataTime(){
+        if (this.getStatus() == 'create' || this.getStatus() == 'lobby'){
+            return {'id': '-1', 'time': -1};
+        }
+        if (this.getStatus() == 'begin'){
+            return {'id': '0', 'time': this.timeBegin}
+        }
+        if (this.getStatus() == 'play'){
+            return {'id': '1', 'time': this.timePlay}
+        }
+        if (this.getStatus() == 'end'){
+            return {'id': '2', 'time': this.timeEnd}
+        }
+        if (this.getStatus() == 'lock'){
+            return {'id': '3', 'time': -1}
+        }
+        return {'id': '4', 'time': -1}
     }
 
     public getId(): string {

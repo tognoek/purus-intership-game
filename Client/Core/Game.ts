@@ -6,7 +6,7 @@ export default class Game {
     private session: Session;
 
     constructor() {
-        this.session = Session.getInstance();
+        this.session = Session.gI();
     }
 
     public setUp() {

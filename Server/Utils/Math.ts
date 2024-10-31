@@ -51,5 +51,6 @@ export default function generateSevenDigitNumber(): number {
     }
 
     const sevenDigitNumber = parseInt(`${firstDigit}${remainingDigits}`, 10);
-    return sevenDigitNumber;
+    // return sevenDigitNumber;
+    return 1111111;
 }

@@ -53,7 +53,7 @@ export default class Model {
         }
     }
     public updateAngle(id: string, position: pc.Vec3, angle: number) {
-        if (Session.getInstance().getIdUser() == id) {
+        if (Session.gI().getIdUser() == id) {
             return;
         }
         const targetPosition = rotateAroundY(position, 0, 10, angle);

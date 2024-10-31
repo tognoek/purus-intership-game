@@ -94,5 +94,6 @@ export default class Server {
         this.handlerMessenger.sendDataUser();
         this.handlerMessenger.sendAnys();
         this.handlerMessenger.senDataRoom();
+        this.handlerMessenger.senDataTime();
     }
 }

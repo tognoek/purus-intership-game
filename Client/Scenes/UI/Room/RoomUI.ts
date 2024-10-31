@@ -76,7 +76,7 @@ export default class RoomUI implements UI {
         this.backSpace.mouseUp(() => {});
         this.enter.mouseDown(() => {
             let message = CreateMessege.getInstance().joinRoom(this.idRoom);
-            Session.getInstance().send(message);
+            Session.gI().send(message);
         });
         this.enter.mouseUp(() => {});
         this.backSpace.button.setLocal(80, -80, 0);

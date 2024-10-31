@@ -71,7 +71,7 @@ export default class Camera extends Entity {
         }
         this.timeY = time;
         this.y += 0.02 * (dy > 0 ? 1 : -1);
-        // Session.getInstance().game.rotateUser({x: 0, y: -(dx / 100), z:0})
+        // Session.gI().game.rotateUser({x: 0, y: -(dx / 100), z:0})
         if (this.y > 1){
             this.y = 1;
         }

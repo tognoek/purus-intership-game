@@ -47,13 +47,17 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
                         break;
                     case 302:
                         this.readMessenger.readDataUSer(realData);
-                        // console.log(realData)
+                        // console.log(realData);
                         break;
                     case 303:
                         this.readMessenger.readDataCreateColum(realData);
                         break;
                     case 304:
                         this.readMessenger.readDataRoom(realData);
+                        break;
+                    case 305:
+                        this.readMessenger.readDataTime(realData);
+                        // console.log(realData);
                         break;
                     default:
                         break;

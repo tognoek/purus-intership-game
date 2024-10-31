@@ -91,13 +91,13 @@ export default class GameManager {
     }
 
     public rotateUser(angel: { x: number; y: number; z: number }) {
-        let user = Session.getInstance().getIdUser();
+        let user = Session.gI().getIdUser();
         if (user) {
             this.models.get(user)?.rotate(angel);
         }
     }
     public lockAtUser(position: pc.Vec3) {
-        let user = Session.getInstance().getIdUser();
+        let user = Session.gI().getIdUser();
         if (user) {
             this.models.get(user)?.lookAt(position);
             Manager.gI().screen?.lightLockAt(position);

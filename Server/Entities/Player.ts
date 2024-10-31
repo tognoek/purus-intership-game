@@ -10,11 +10,15 @@ export default class Player {
     constructor(id: string, name: string | null) {
         this.id = id;
         this.name = name ?? this.id;
-        this.maxHp = 100;
+        this.maxHp = 5;
         this.hp = this.maxHp;;
         this.point = 0;
         this.dame = 10;
         this.idChar = 0;
+    }
+
+    public revive(){
+        this.hp = this.maxHp;
     }
 
     public isDie(){
@@ -82,6 +86,14 @@ export default class Player {
             hp: this.hp,
             point: this.point,
             dame: this.dame,
+        };
+    }
+    public score(){
+        return {
+            id: this.id,
+            name: this.name,
+            char: this.idChar,
+            point: this.point,
         };
     }
 }

@@ -15,8 +15,16 @@ export default class WorldManager {
         return this.worlds.get(idRoom);
     }
 
+    public removeWorld(idRoom: string){
+        this.worlds.delete(idRoom);
+    }
+
     public addPlayer(idRoom: string, idPlayer: string) {
         this.worlds.get(idRoom)?.addPlayer(idPlayer);
+    }
+
+    public resetPlayer(idRoom: string, idPlayer: string) {
+        this.worlds.get(idRoom)?.resetPlayer(idPlayer);
     }
 
     public addProjectile(idRoom: string, idPlayer: string, idChar: number) {

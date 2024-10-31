@@ -57,7 +57,7 @@ export default class Manager {
         if (this.attackManager.getAttack(idPlayer)) {
             return;
         }
-        if (Manager.gI().getStatus(idRoom) != 1) {
+        if (this.roomManager.getStatus(idRoom) != 'play') {
             return;
         }
         this.worldManager.getWorld(idRoom)?.applyForce(idPlayer, force);
@@ -75,7 +75,7 @@ export default class Manager {
         if (this.attackManager.getAttack(idPlayer)) {
             return;
         }
-        if (Manager.gI().getStatus(idRoom) != 1) {
+        if (this.roomManager.getStatus(idRoom) != 'play') {
             return;
         }
         this.worldManager.getWorld(idRoom)?.applyVelocity(idPlayer, velocity, angle);
@@ -86,7 +86,7 @@ export default class Manager {
         if (!idRoom) {
             return;
         }
-        if (Manager.gI().getStatus(idRoom) != 1) {
+        if (this.roomManager.getStatus(idRoom) != 'play') {
             return;
         }
         const idChar = this.roomManager.getPlayer(idPlayer)!.getChar();
@@ -101,10 +101,24 @@ export default class Manager {
 
     public updateWord() {
         this.worldManager.update();
+        this.roomManager.update();
         const dataAttack = this.worldManager.getCollisonProjectile();
         dataAttack.forEach((data) => {
             this.roomManager.updateAttack(data);
         });
+        const playerDies = this.roomManager.getPlayerDies();
+        for (const idRoom in playerDies){
+            const dataPlayerDies = playerDies[idRoom];
+            dataPlayerDies.forEach(idPlayer => {
+                this.worldManager.resetPlayer(idRoom, idPlayer);
+                this.roomManager.revivePlayer(idPlayer);
+            })
+        }
+        const roomDie = this.roomManager.getRoomEnd();
+        roomDie.forEach(idRoom => {
+            this.roomManager.removeRoom(idRoom);
+            this.worldManager.removeWorld(idRoom);
+        })
     }
 
     public getSizeMax(): number{
@@ -140,7 +154,12 @@ export default class Manager {
     public getDataPlayerAll() {
         return this.roomManager.getAllDataPlayer();
     }
-
+    public getDataTimeAll(){
+        return this.roomManager.getAllDataTime();
+    }
+    public getDataScoreAll() {
+        return this.roomManager.getAllDataScore();
+    }
     public getDataNamePlayerAll(){
         return this.roomManager.getDataNamePlayer();
     }
