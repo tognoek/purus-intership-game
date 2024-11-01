@@ -1,7 +1,0 @@
-{
-    "watch": [
-        "./Server/**/*.ts"
-    ],
-    "ext": "ts",
-    "exec": "ts-node ./Server/Main.ts"
-}

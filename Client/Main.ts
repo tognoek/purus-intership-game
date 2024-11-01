@@ -1,4 +1,4 @@
-import Game from './Core/Game';
+import Game from './src/Core/Game';
 
 const game = new Game();
 

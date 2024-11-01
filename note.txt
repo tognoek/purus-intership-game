@@ -1,4 +1,0 @@
-0 - Mage
-1 - Bar
-2 - Knight
-3 - Rogue

@@ -9,7 +9,7 @@ export default class RoomManager {
     constructor() {
         this.rooms = new Set();
         this.isRoom = new Map();
-        this.maxSize = 3;
+        this.maxSize = 2;
     }
 
     public checkRoom(id: string) {
