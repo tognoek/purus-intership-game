@@ -11,10 +11,11 @@ export default class ButtonNumber {
             number -= 10;
         }
         this.number = number;
-        this.button = new Button({ width: 70, height: 70 });
+        this.button = new Button({ width: 100, height: 100 });
         this.assets = [
-            LoadData.gI().assets[`keyboard_${this.number + 101}`],
-            LoadData.gI().assets[`keyboard_${this.number}`],
+            // LoadData.gI().assets[`keyboard_${this.number + 101}`],
+            LoadData.gI().assets[`${this.number}`],
+            LoadData.gI().assets[`${this.number}`],
         ];
         this.button.setImage(this.assets[1]);
     }

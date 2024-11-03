@@ -12,6 +12,14 @@ export default class ReadMessenger {
         Manager.gI().newRoom(user!);
     }
 
+    public leaveRoom(msg: Messenger){
+        let user = msg.getUser();
+        if (!user){
+            return;
+        }
+        Manager.gI().removePlayer(user);
+    }
+
     public joinRoom(msg: Messenger) {
         let user = msg.getUser();
         const idRoom = (msg.getData() as { idRoom?: string })?.idRoom;

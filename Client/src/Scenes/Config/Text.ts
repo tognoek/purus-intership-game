@@ -12,7 +12,6 @@ export default class Text extends pc.Entity {
         this.alignment = alignment;
         this.is = is;
         this.init(data);
-        this.addComponent('button');
     }
 
     protected init(data: { width: number; height: number }) {
@@ -41,9 +40,19 @@ export default class Text extends pc.Entity {
         this.textElement.setLocalPosition(0, 0, 1);
     }
 
+    public setImage(image: pc.Asset){
+        this.element!.textureAsset = image.id;
+    }
+
     public setText(text: string) {
         if (this.textElement.element) {
             this.textElement.element.text = text;
+        }
+    }
+
+    public setFont(font: number) {
+        if (this.textElement.element) {
+            this.textElement.element.fontSize = font;
         }
     }
 

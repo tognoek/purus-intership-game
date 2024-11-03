@@ -14,13 +14,18 @@ export default class LoadUI implements UI{
             width: this.screen.screen!.referenceResolution.x,
             height: this.screen.screen!.referenceResolution.y,
         });
-        this.progressBar = new ProgressBar({width: 500, height: 80});
+        this.progressBar = new ProgressBar({width: 900, height: 80});
+        this.progressBar.setLocal(0, -340, 0);
         this.init();
     }
 
     private init(){
         this.screen.addChild(this.background);
         this.screen.addChild(this.progressBar);
+    }
+
+    public setTime(time: number){
+        this.progressBar.setTime(time);
     }
 
     close(): void {

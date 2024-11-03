@@ -32,7 +32,18 @@ export default class WorldManager {
     }
 
     public removePlayer(idRoom: string, idPlayer: string) {
-        this.worlds.get(idRoom)?.removePlayer(idPlayer);
+        const wolrd = this.worlds.get(idRoom);
+        if (!wolrd){
+            return;
+        }
+        wolrd.removePlayer(idPlayer);
+        if (wolrd.getSize() < 1){
+            this.delete(idPlayer);
+        }
+    }
+
+    public delete(idRoom: string){
+        this.worlds.delete(idRoom);
     }
 
     public update() {

@@ -4,6 +4,10 @@ import UI from '../InterfaceUI';
 import Text from '../../Config/Text';
 import BackGround from '../../Config/Background';
 import LoadData from '../../../Script/LoadData';
+import ButtonBack from '../../Config/ButtonBack';
+import Manager from '../../../Core/Manager';
+import CreateMessege from '../../../Script/CreateMessenge';
+import Session from '../../../Core/Session';
 
 export default class LobbyUI implements UI {
     private screen: pc.Entity;
@@ -14,6 +18,7 @@ export default class LobbyUI implements UI {
     private lable: Text;
     private background: BackGround;
     private background_two: BackGround;
+    private back: ButtonBack;
 
     constructor(screen: pc.Entity) {
         this.screen = screen;
@@ -26,7 +31,7 @@ export default class LobbyUI implements UI {
             width: this.screen.screen!.referenceResolution.x,
             height: this.screen.screen!.referenceResolution.y,
         });
-
+        this.back = new ButtonBack();
         this.background_two = new BackGround(
             {
                 width: 500,
@@ -39,6 +44,7 @@ export default class LobbyUI implements UI {
     }
 
     private init() {
+        this.back.button.setLocal(-600, 340, 0);
         this.textShow.setLocalPosition(-40, 200, 0);
         this.textIdRoom.setLocalPosition(20, 100, 0);
         this.textShowSize.setLocalPosition(-40, 0, 0);
@@ -54,6 +60,12 @@ export default class LobbyUI implements UI {
         this.screen.addChild(this.textShowSize);
         this.screen.addChild(this.textSize);
         this.screen.addChild(this.lable);
+        this.screen.addChild(this.back.button);
+        this.back.mouseDown(() => {
+            let message = CreateMessege.getInstance().leaveRoom('Leave Room!!');
+            Session.gI().send(message);
+            Manager.gI().screen?.updateStatus('home');
+        });
     }
 
     public setText(idRoom: string, size: number, max: number) {
@@ -63,6 +75,7 @@ export default class LobbyUI implements UI {
     }
 
     close(): void {
+        this.back.button.enabled = false;
         this.background.enabled = false;
         this.background_two.enabled = false;
         this.lable.enabled = false;
@@ -72,6 +85,7 @@ export default class LobbyUI implements UI {
         this.textSize.enabled = false;
     }
     open(): void {
+        this.back.button.enabled = true;
         this.background.enabled = true;
         this.background_two.enabled = true;
         this.lable.enabled = true;

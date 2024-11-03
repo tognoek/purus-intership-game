@@ -8,7 +8,7 @@ export default class ButtonText {
     public textElement: pc.Entity;
 
     constructor(text: string) {
-        this.button = new Button({ width: 280, height: 100 });
+        this.button = new Button({ width: 320, height: 160 });
         this.button.setImage(LoadData.gI().assets.background_button);
         this.textElement = new pc.Entity();
         this.init(text);
@@ -27,6 +27,10 @@ export default class ButtonText {
             text: text,
         });
         this.button.addChild(this.textElement);
+    }
+
+    public setImage(image: pc.Asset){
+        this.button.setImage(image);
     }
 
     public mouseDown(callBack: Function) {

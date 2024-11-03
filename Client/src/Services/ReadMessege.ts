@@ -37,12 +37,14 @@ export default class ReadMessenge {
                 break;
             case '0':
                 Manager.gI().screen?.updateStatus('load');
+                Manager.gI().screen?.updateTimeLoad(dataFormat.time);
                 break;
             case '1':
                 Manager.gI().screen?.updateStatus('play');
                 Manager.gI().screen?.updateIdRoom(dataFormat.idRoom);
                 break;
             case '2':
+                Manager.gI().screen?.updateStatus('end');
                 break;
             case '3':
                 break;

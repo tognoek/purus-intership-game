@@ -130,6 +130,10 @@ export default class World {
         this.physicWorld.applyVelocity(idPlayer, velocity, angle);
     }
 
+    public getSize(): number{
+        return this.players.length;
+    }
+
     public update(dt: number | null) {
         const timeStep = dt || 1 / 30;
         const maxSubSteps = 10;

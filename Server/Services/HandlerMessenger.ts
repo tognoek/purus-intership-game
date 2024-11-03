@@ -45,6 +45,9 @@ export default class HandlerMessenger {
                 break;
             case 2: // Add Models
                 break;
+            case 3: // Leave Room
+                this.readMessenger.leaveRoom(msg);
+                break;
             case 11: // Jump
                 data = msg.getData() as { force: { x: number; y: number; z: number } };
                 this.readMessenger.applyForce(idPlayer, data.force);

@@ -1,12 +1,13 @@
 import * as pc from 'playcanvas';
 import LoadData from '../../../Script/LoadData';
+import ImageText from '../../Config/ImageText';
 
 export default class HealthBar extends pc.Entity {
     private hpBar: pc.Entity;         
     private hpText: pc.Entity;         
     private currentHp: number;
     private maxHp: number;
-    private scoreText: pc.Entity;
+    private scoreText: ImageText;
     private idRoom: pc.Entity;
     private data: {width: number, height: number}
 
@@ -15,7 +16,7 @@ export default class HealthBar extends pc.Entity {
         this.currentHp = hp;
         this.maxHp = hpMax;
         this.hpBar = new pc.Entity();
-        this.scoreText = new pc.Entity();
+        this.scoreText = new ImageText({width: 200, height: 80});
         this.idRoom = new pc.Entity();
         this.hpText = new pc.Entity();
         this.data = data;
@@ -43,15 +44,7 @@ export default class HealthBar extends pc.Entity {
     }
 
     private score(){
-        this.scoreText.addComponent('element', {
-            type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 1, 0, 1],
-            pivot: [0, 0.5],
-            fontSize: 38,
-            fontAsset: LoadData.gI().assets.FontGamja.id,
-            color: new pc.Color(0, 0, 0),
-            text: `Score: `,
-        });
+        this.scoreText.setImage(LoadData.gI().assets.private)
         this.scoreText.setLocalPosition(-80, -100, 0);
         this.addChild(this.scoreText);
     }
@@ -109,7 +102,7 @@ export default class HealthBar extends pc.Entity {
     }
 
     public setTextScore(score: number){
-        this.scoreText.element!.text = `Score: ${score}`;
+        this.scoreText.setText(score.toString());
     }
 
     public setTextRoom(id: string){

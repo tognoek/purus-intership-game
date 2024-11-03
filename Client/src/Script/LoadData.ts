@@ -86,11 +86,65 @@ export default class LoadData{
             load: new pc.Asset('load', 'texture',{
                 url: `${rootPath}/Texture/load.png`,
             }),
+            new_room: new pc.Asset('new_room', 'texture',{
+                url: `${rootPath}/tognoek/new_room.png`,
+            }),
+            join_room: new pc.Asset('join_room', 'texture',{
+                url: `${rootPath}/tognoek/join_room.png`,
+            }),
+            bg_tognoek: new pc.Asset('bg_tognoek', 'texture',{
+                url: `${rootPath}/tognoek/tognoek.png`,
+            }),
+            bg: new pc.Asset('bg', 'texture',{
+                url: `${rootPath}/tognoek/background.png`,
+            }),
+            name_game: new pc.Asset('name_game', 'texture',{
+                url: `${rootPath}/tognoek/name_game.png`,
+            }),
+            bg_box: new pc.Asset('background_box', 'texture',{
+                url: `${rootPath}/tognoek/background_box.png`,
+            }),
+            input: new pc.Asset('input', 'texture',{
+                url: `${rootPath}/tognoek/input.png`,
+            }),
+            enter: new pc.Asset('enter', 'texture',{
+                url: `${rootPath}/tognoek/enter.png`,
+            }),
+            remove: new pc.Asset('remove', 'texture',{
+                url: `${rootPath}/tognoek/remove.png`,
+            }),
+            back: new pc.Asset('back', 'texture',{
+                url: `${rootPath}/tognoek/back.png`,
+            }),
+            load_bar: new pc.Asset('load_bar', 'texture',{
+                url: `${rootPath}/tognoek/load_bar.png`,
+            }),
+            load_text: new pc.Asset('load_text', 'texture',{
+                url: `${rootPath}/tognoek/loading_text.png`,
+            }),
+            cup: new pc.Asset('cup', 'texture',{
+                url: `${rootPath}/tognoek/cup.png`,
+            }),
+            home: new pc.Asset('home', 'texture',{
+                url: `${rootPath}/tognoek/home.png`,
+            }),
+            score: new pc.Asset('score', 'texture',{
+                url: `${rootPath}/tognoek/score.png`,
+            }),
+            public: new pc.Asset('public', 'texture',{
+                url: `${rootPath}/tognoek/public.png`,
+            }),
+            private: new pc.Asset('private', 'texture',{
+                url: `${rootPath}/tognoek/private.png`,
+            }),
         };
         for (let i = 0; i < 10; i++) {
             let id = `keyboard_${i}`;
             this.assets[id] = new pc.Asset(id, 'texture', {
                 url: `${rootPath}/Numbers/${id}.png`,
+            });
+            this.assets[`${i}`] = new pc.Asset(`${i}`, 'texture', {
+                url: `${rootPath}/tognoek/${i}.png`,
             });
             id = `keyboard_${i + 101}`;
             this.assets[id] = new pc.Asset(id, 'texture', {

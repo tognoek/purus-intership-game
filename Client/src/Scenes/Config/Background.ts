@@ -4,7 +4,7 @@ import LoadData from '../../Script/LoadData';
 export default class BackGround extends pc.Entity {
     constructor(
         data: { width: number; height: number },
-        background: any | null = LoadData.gI().assets.background_cute
+        background: any | null = LoadData.gI().assets.bg_tognoek
     ) {
         super();
         this.init(data, background);

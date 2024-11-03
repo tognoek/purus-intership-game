@@ -17,8 +17,8 @@ export default class Room {
         this.id = id;
         this.players = new Set();
         this.isChar = [false, false, false, false, false];
-        this.timePlay = 10; // 5,
-        this.timeBegin = 5; // 5s
+        this.timePlay = 15; // 5,
+        this.timeBegin = 5000; // 5s
         this.timeEnd = 15; // 10s
         this.status = 'create';
         this.idTimeClear = null;
@@ -42,7 +42,7 @@ export default class Room {
             }
             this.idTimeClear = setInterval(() => {
                 this.timeBegin -= 1;
-            }, 1000);
+            }, 1);
         }
         if (this.status == 'begin' && this.timeBegin < 0){
             if (this.idTimeClear){

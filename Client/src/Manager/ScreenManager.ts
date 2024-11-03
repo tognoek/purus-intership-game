@@ -7,6 +7,7 @@ import UI from '../Scenes/UI/InterfaceUI';
 import PlayUI from '../Scenes/UI/Play/PlayUI';
 import LobbyUI from '../Scenes/UI/Lobby/Lobby';
 import LoadUI from '../Scenes/UI/Load/LoadUI';
+import EndUI from '../Scenes/UI/End/EndUI';
 
 export default class ScreenManager {
     public status: string;
@@ -17,6 +18,7 @@ export default class ScreenManager {
     private playUI: UI;
     private lobbyUI: UI;
     private loadUI: UI;
+    private endUI: UI;
 
     constructor() {
         this.screen = new pc.Entity();
@@ -32,9 +34,17 @@ export default class ScreenManager {
         this.playUI = new PlayUI(this.screen);
         this.lobbyUI = new LobbyUI(this.screen);
         this.loadUI = new LoadUI(this.screen);
-        this.listUI = [this.roomUI, this.homeUI, this.playUI, this.lobbyUI, this.loadUI];
+        this.endUI = new EndUI(this.screen);
+        this.listUI = [
+            this.roomUI,
+            this.homeUI,
+            this.playUI,
+            this.lobbyUI,
+            this.loadUI,
+            this.endUI,
+        ];
         Manager.gI().canvas.addChild(this.screen);
-        this.updateStatus('home');
+        this.updateStatus('end');
     }
 
     public updateStatus(status: string) {
@@ -66,6 +76,9 @@ export default class ScreenManager {
             case 'load':
                 this.loadUI.open();
                 break;
+            case 'end':
+                this.endUI.open();
+                break;
             default:
                 this.homeUI.open();
                 break;
@@ -86,5 +99,9 @@ export default class ScreenManager {
 
     public lightLockAt(position: pc.Vec3) {
         (this.playUI as PlayUI).setLockAt(position);
+    }
+
+    public updateTimeLoad(time: number) {
+        (this.loadUI as LoadUI).setTime(time);
     }
 }

@@ -15,6 +15,10 @@ export default class CreateMessege {
         return new Messange(0, { idRoom: id });
     }
 
+    public leaveRoom(msg: string): Messange {
+        return new Messange(3, { msg: msg });
+    }
+
     public joinRoom(idRoom: string): Messange {
         return new Messange(1, { idRoom: idRoom });
     }
