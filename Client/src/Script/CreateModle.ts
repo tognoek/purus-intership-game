@@ -24,6 +24,7 @@ export default class CreateModel {
             type: 'dynamic',
         });
         arrowEnity.setPosition(position.x, position.y, position.z);
+        arrowEnity.setLocalScale(0.2, 0.2, 0.2);
         return arrowEnity;
     }
     public createColum(position: { x: number; y: number; z: number }): pc.Entity {

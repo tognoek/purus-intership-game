@@ -18,15 +18,22 @@ export default class ReadMessenge {
 
     public readDataUSer(data: object) {
         let dataFormat = data as {
-            id: string;
-            name: string;
-            char: number;
-            hp: number;
-            hpMax: number;
-            point: number;
-            dame: number;
+            id: string,
+            name: string,
+            char: number,
+            hp: number,
+            hpMax: number,
+            point: number,
+            pointEnd: number,
+            dame: number,
         };
-        Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.hpMax, dataFormat.point);
+        Manager.gI().screen?.updateHpPoint(dataFormat.hp, dataFormat.hpMax, dataFormat.point,  dataFormat.pointEnd);
+    }
+
+    public readDataRank(data: object){
+        let dataFormat = data as {score: number, top: number}
+        Manager.gI().screen?.updateStatus('end');
+        Manager.gI().screen?.updateEnd(dataFormat.score, dataFormat.top);
     }
 
     public readDataTime(data: object) {
@@ -42,6 +49,7 @@ export default class ReadMessenge {
             case '1':
                 Manager.gI().screen?.updateStatus('play');
                 Manager.gI().screen?.updateIdRoom(dataFormat.idRoom);
+                Manager.gI().screen?.updateTimePlay(dataFormat.time);
                 break;
             case '2':
                 Manager.gI().screen?.updateStatus('end');

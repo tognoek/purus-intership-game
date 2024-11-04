@@ -59,6 +59,10 @@ export default class GlobalMessengeHandeler implements IMessageHandler {
                         this.readMessenger.readDataTime(realData);
                         // console.log(realData);
                         break;
+                    case 306:
+                        this.readMessenger.readDataRank(realData);
+                        // console.log(realData);
+                        break;
                     default:
                         break;
                 }

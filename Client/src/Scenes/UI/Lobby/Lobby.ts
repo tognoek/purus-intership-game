@@ -8,25 +8,24 @@ import ButtonBack from '../../Config/ButtonBack';
 import Manager from '../../../Core/Manager';
 import CreateMessege from '../../../Script/CreateMessenge';
 import Session from '../../../Core/Session';
+import TextBasic from '../../Config/TextBasic';
 
 export default class LobbyUI implements UI {
     private screen: pc.Entity;
-    private textShow: Text;
-    private textIdRoom: Text;
-    private textShowSize: Text;
-    private textSize: Text;
-    private lable: Text;
+    private textIdRoom: TextBasic;
+    private textSize: TextBasic;
     private background: BackGround;
     private background_two: BackGround;
     private back: ButtonBack;
 
     constructor(screen: pc.Entity) {
         this.screen = screen;
-        this.textShow = new Text({ width: 240, height: 80 }, 'center', true);
-        this.textIdRoom = new Text({ width: 240, height: 80 }, 'center', true);
-        this.textShowSize = new Text({ width: 240, height: 80 }, 'center', true);
-        this.textSize = new Text({ width: 240, height: 80 }, 'center', true);
-        this.lable = new Text({ width: 300, height: 80 });
+        this.textIdRoom = new TextBasic({width: 200, height: 80}, '');
+        this.textIdRoom.setSize(70);
+        this.textIdRoom.setColor(0, 0, 0);
+        this.textSize = new TextBasic({width: 200, height: 80}, '');
+        this.textSize.setSize(70);
+        this.textSize.setColor(0, 0, 0);
         this.background = new BackGround({
             width: this.screen.screen!.referenceResolution.x,
             height: this.screen.screen!.referenceResolution.y,
@@ -34,10 +33,10 @@ export default class LobbyUI implements UI {
         this.back = new ButtonBack();
         this.background_two = new BackGround(
             {
-                width: 500,
-                height: 550,
+                width: 800,
+                height: 800,
             },
-            LoadData.gI().assets.background_brow
+            LoadData.gI().assets.bg_lobby
         );
         this.background_two.setLocalPosition(0, 40, 0);
         this.init();
@@ -45,21 +44,12 @@ export default class LobbyUI implements UI {
 
     private init() {
         this.back.button.setLocal(-600, 340, 0);
-        this.textShow.setLocalPosition(-40, 200, 0);
-        this.textIdRoom.setLocalPosition(20, 100, 0);
-        this.textShowSize.setLocalPosition(-40, 0, 0);
-        this.textShowSize.setText(`Player`);
-        this.textSize.setLocalPosition(20, -100, 0);
-        this.lable.setText('Lobby');
-        this.lable.setColor(1, 1, 1);
-        this.lable.setLocalPosition(0, 300, 0);
+        this.textIdRoom.setLocalPosition(20, 110, 0);
+        this.textSize.setLocalPosition(20, -200, 0);
         this.screen.addChild(this.background);
         this.screen.addChild(this.background_two);
-        this.screen.addChild(this.textShow);
         this.screen.addChild(this.textIdRoom);
-        this.screen.addChild(this.textShowSize);
         this.screen.addChild(this.textSize);
-        this.screen.addChild(this.lable);
         this.screen.addChild(this.back.button);
         this.back.mouseDown(() => {
             let message = CreateMessege.getInstance().leaveRoom('Leave Room!!');
@@ -69,7 +59,6 @@ export default class LobbyUI implements UI {
     }
 
     public setText(idRoom: string, size: number, max: number) {
-        this.textShow.setText(`ID ROOM`);
         this.textIdRoom.setText(idRoom);
         this.textSize.setText(`${size}|${max}`);
     }
@@ -78,20 +67,14 @@ export default class LobbyUI implements UI {
         this.back.button.enabled = false;
         this.background.enabled = false;
         this.background_two.enabled = false;
-        this.lable.enabled = false;
-        this.textShow.enabled = false;
         this.textIdRoom.enabled = false;
-        this.textShowSize.enabled = false;
         this.textSize.enabled = false;
     }
     open(): void {
         this.back.button.enabled = true;
         this.background.enabled = true;
         this.background_two.enabled = true;
-        this.lable.enabled = true;
-        this.textShow.enabled = true;
         this.textIdRoom.enabled = true;
-        this.textShowSize.enabled = true;
         this.textSize.enabled = true;
     }
 }

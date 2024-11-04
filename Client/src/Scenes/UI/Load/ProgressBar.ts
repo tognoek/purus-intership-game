@@ -1,8 +1,7 @@
-import * as pc from "playcanvas";
-import LoadData from "../../../Script/LoadData";
+import * as pc from 'playcanvas';
+import LoadData from '../../../Script/LoadData';
 
-export default class ProgressBar extends pc.Entity{
-
+export default class ProgressBar extends pc.Entity {
     private background: pc.Entity;
     private white: pc.Entity;
     private text: pc.Entity;
@@ -10,7 +9,7 @@ export default class ProgressBar extends pc.Entity{
     private load: pc.Entity;
     private maxWidth: number;
 
-    constructor(data: { width: number; height: number }){
+    constructor(data: { width: number; height: number }) {
         super();
         this.background = new pc.Entity();
         this.white = new pc.Entity();
@@ -18,14 +17,14 @@ export default class ProgressBar extends pc.Entity{
         this.progress = new pc.Entity();
         this.load = new pc.Entity();
         this.maxWidth = data.width - 30;
-        this.addComponent('element',{
+        this.addComponent('element', {
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
         });
         this.init(data);
     }
 
-    private init(data: { width: number; height: number }){
+    private init(data: { width: number; height: number }) {
         this.background.addComponent('element', {
             type: pc.ELEMENTTYPE_IMAGE,
             anchor: [0.5, 0.5, 0.5, 0.5],
@@ -33,23 +32,25 @@ export default class ProgressBar extends pc.Entity{
             width: data.width,
             height: data.height,
             textureAsset: LoadData.gI().assets.load_bar,
-        })
+        });
         this.white.addComponent('element', {
             type: pc.ELEMENTTYPE_IMAGE,
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
             width: data.width - 30,
             height: data.height - 34,
-            color: new pc.Color(1, 1, 1)
-        })
+            color: new pc.Color(1, 1, 1),
+        });
+        this.white.setLocalPosition(0, 2, 0);
         this.progress.addComponent('element', {
             type: pc.ELEMENTTYPE_IMAGE,
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
             width: 0,
             height: data.height - 33,
-            color: new pc.Color(192 / 255,255 / 255,130 / 255)
-        })
+            color: new pc.Color(192 / 255, 255 / 255, 130 / 255),
+        });
+        this.progress.setLocalPosition(0, 2, 0);
         this.text.addComponent('element', {
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
@@ -68,7 +69,7 @@ export default class ProgressBar extends pc.Entity{
             width: 300,
             height: data.height,
             textureAsset: LoadData.gI().assets.load_text,
-        })
+        });
         this.load.setLocalPosition(0, -80, 0);
         this.addChild(this.white);
         this.addChild(this.load);
@@ -80,9 +81,8 @@ export default class ProgressBar extends pc.Entity{
         this.setLocalPosition(x, y, z);
     }
 
-    public setTime(time: number){
-        console.log(Math.floor((5000 - time) / 5000 * 100))
-        this.text.element!.text = `${Math.floor((5000 - time) / 5000 * 100)}%`;
-        this.progress.element!.width = this.maxWidth * ((5000 - time) / 5000); 
+    public setTime(time: number) {
+        this.text.element!.text = `${Math.floor(((5000 - time) / 5000) * 100)}%`;
+        this.progress.element!.width = this.maxWidth * ((5000 - time) / 5000);
     }
 }

@@ -7,7 +7,8 @@ export default class HealthBar extends pc.Entity {
     private hpText: pc.Entity;         
     private currentHp: number;
     private maxHp: number;
-    private scoreText: ImageText;
+    private public: ImageText;
+    private private: ImageText;
     private idRoom: pc.Entity;
     private data: {width: number, height: number}
 
@@ -16,7 +17,8 @@ export default class HealthBar extends pc.Entity {
         this.currentHp = hp;
         this.maxHp = hpMax;
         this.hpBar = new pc.Entity();
-        this.scoreText = new ImageText({width: 200, height: 80});
+        this.public = new ImageText({width: 200, height: 80});
+        this.private = new ImageText({width: 200, height: 80});
         this.idRoom = new pc.Entity();
         this.hpText = new pc.Entity();
         this.data = data;
@@ -26,7 +28,7 @@ export default class HealthBar extends pc.Entity {
     private int(){
         this.hp();
         this.score();
-        this.room();
+        // this.room();
     }
 
     private room(){
@@ -44,9 +46,12 @@ export default class HealthBar extends pc.Entity {
     }
 
     private score(){
-        this.scoreText.setImage(LoadData.gI().assets.private)
-        this.scoreText.setLocalPosition(-80, -100, 0);
-        this.addChild(this.scoreText);
+        this.public.setImage(LoadData.gI().assets.public)
+        this.public.setLocalPosition(-200, -100, 0);
+        this.addChild(this.public);
+        this.private.setImage(LoadData.gI().assets.private)
+        this.private.setLocalPosition(-200, -200, 0);
+        this.addChild(this.private);
     }
 
     private hp(){
@@ -55,9 +60,10 @@ export default class HealthBar extends pc.Entity {
             anchor: [0, 0.5, 0, 0.5],
             pivot: [0, 0.5],
             width: this.data.width * (this.currentHp / this.maxHp),  
-            height: this.data.height,
+            height: this.data.height - 34,
             color: new pc.Color(1, 0.4, 0.7), 
         });
+        this.hpBar.setLocalPosition(0, 0, 0);
         this.addChild(this.hpBar);
 
         this.addComponent('element', {
@@ -65,17 +71,18 @@ export default class HealthBar extends pc.Entity {
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
             width: this.data.width,
-            height: this.data.height,
+            height: this.data.height - 34,
         });
         const background = new pc.Entity();
         background.addComponent('element', {
             type: pc.ELEMENTTYPE_IMAGE,
             anchor: [0.5, 0.5, 0.5, 0.5],
             pivot: [0.5, 0.5],
-            width: this.data.width,
+            width: this.data.width + 6,
             height: this.data.height,
-            textureAsset: LoadData.gI().assets.box_health,
+            textureAsset: LoadData.gI().assets.load_bar,
         });
+        background.setLocalPosition(0, -4, 0);
         this.addChild(background);
         const icon = new pc.Entity();
         icon.addComponent('element', {
@@ -84,9 +91,9 @@ export default class HealthBar extends pc.Entity {
             pivot: [0.5, 0.5],
             width: 80,
             height: 80,
-            textureAsset: LoadData.gI().assets.health,
+            textureAsset: LoadData.gI().assets.hp,
         });
-        icon.setLocalPosition(-200, 0, 0);
+        icon.setLocalPosition(-260, 0, 0);
         this.addChild(icon);
         this.hpText.addComponent('element', {
             type: pc.ELEMENTTYPE_TEXT,
@@ -101,12 +108,13 @@ export default class HealthBar extends pc.Entity {
         this.addChild(this.hpText);
     }
 
-    public setTextScore(score: number){
-        this.scoreText.setText(score.toString());
+    public setTextScore(score: number, point: number){
+        this.public.setText(point.toString());
+        this.private.setText(score.toString());
     }
 
     public setTextRoom(id: string){
-        this.idRoom.element!.text = `ID: ${id}`;
+        // this.idRoom.element!.text = `ID: ${id}`;
     }
 
     public setHp(newHp: number, maxHp: number) {

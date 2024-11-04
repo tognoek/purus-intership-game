@@ -23,7 +23,7 @@ export default class LoadData{
                 url: `${rootPath}/Models/rogue.glb`,
             }),
             Arrow: new pc.Asset('arrow', 'model', {
-                url: `${rootPath}/Models/arrow.glb`,
+                url: `${rootPath}/Models/bridre.glb`,
             }),
             Colum: new pc.Asset('colum', 'model', {
                 url: `${rootPath}/Models/colum.glb`,
@@ -136,6 +136,27 @@ export default class LoadData{
             }),
             private: new pc.Asset('private', 'texture',{
                 url: `${rootPath}/tognoek/private.png`,
+            }),
+            start: new pc.Asset('start', 'texture',{
+                url: `${rootPath}/tognoek/start.png`,
+            }),
+            top: new pc.Asset('top', 'texture',{
+                url: `${rootPath}/tognoek/top_text.png`,
+            }),
+            hp: new pc.Asset('hp', 'texture',{
+                url: `${rootPath}/tognoek/hp_text.png`,
+            }),
+            bg_lobby: new pc.Asset('bg_lobby', 'texture',{
+                url: `${rootPath}/tognoek/background_lobby.png`,
+            }),
+            control: new pc.Asset('control', 'texture',{
+                url: `${rootPath}/tognoek/control.png`,
+            }),
+            bassic: new pc.Asset('bassic', 'texture',{
+                url: `${rootPath}/tognoek/bassic.png`,
+            }),
+            point: new pc.Asset('point', 'texture',{
+                url: `${rootPath}/tognoek/point.png`,
             }),
         };
         for (let i = 0; i < 10; i++) {

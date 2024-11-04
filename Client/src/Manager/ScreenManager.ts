@@ -44,7 +44,7 @@ export default class ScreenManager {
             this.endUI,
         ];
         Manager.gI().canvas.addChild(this.screen);
-        this.updateStatus('end');
+        this.updateStatus('home');
     }
 
     public updateStatus(status: string) {
@@ -89,8 +89,8 @@ export default class ScreenManager {
         (this.lobbyUI as LobbyUI).setText(id, size, max);
     }
 
-    public updateHpPoint(hp: number, hpMax: number, score: number) {
-        (this.playUI as PlayUI).setData(hp, hpMax, score);
+    public updateHpPoint(hp: number, hpMax: number, score: number, point: number) {
+        (this.playUI as PlayUI).setData(hp, hpMax, score, point);
     }
 
     public updateIdRoom(id: string) {
@@ -101,7 +101,15 @@ export default class ScreenManager {
         (this.playUI as PlayUI).setLockAt(position);
     }
 
+    public updateTimePlay(time: number) {
+        (this.playUI as PlayUI).setTime(time);
+    }
+
     public updateTimeLoad(time: number) {
         (this.loadUI as LoadUI).setTime(time);
+    }
+
+    public updateEnd(score: number, top: number) {
+        (this.endUI as EndUI).update(score, top);
     }
 }

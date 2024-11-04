@@ -7,6 +7,7 @@ import Manager from '../../../Core/Manager';
 import Image from '../../Config/Image';
 import ButtonHome from '../../Config/ButtonHome';
 import ImageText from '../../Config/ImageText';
+import Top from './Top';
 
 export default class EndUI implements UI {
     private screen: pc.Entity;
@@ -15,6 +16,8 @@ export default class EndUI implements UI {
     private logo: Image | null;
     private cup: Image | null;
     private score: ImageText | null;
+    private top: Top | null;
+    private isShow: boolean;
 
     constructor(screen: pc.Entity) {
         this.screen = screen;
@@ -23,6 +26,8 @@ export default class EndUI implements UI {
         this.logo = null;
         this.cup = null;
         this.score = null;
+        this.top = null;
+        this.isShow = false;
         this.init();
     }
 
@@ -43,12 +48,11 @@ export default class EndUI implements UI {
         this.cup.setLocalPosition(-600, 0, 0);
 
         this.score = new ImageText({width: 200, height: 80});
-        this.score.setLocal(-200, 120, 0);
+        this.score.setLocal(-120, 180, 0);
         this.score.setImage(LoadData.gI().assets.score);
-        this.score.setText('222')
 
         this.home = new ButtonHome();
-        this.home.button.setLocal(-60, -160, 0);
+        this.home.button.setLocal(-60, -200, 0);
         this.home.mouseDown(() => {
             Manager.gI().screen?.updateStatus('home');
         });
@@ -59,12 +63,30 @@ export default class EndUI implements UI {
         this.screen.addChild(this.home.button);
     }
 
+    public update(score: number, top: number){
+        if (this.isShow){
+            return;
+        }
+        this.isShow = true;
+        this.score!.setText(score.toString());
+        this.setTop(top);
+    }
+
+    public setTop(top: number){
+        this.top = new Top(top);
+        this.top.setLocalPosition(-60, -20, 0);
+        this.screen.addChild(this.top);
+    }
+
     close(): void {
         this.logo!.enabled = false;
         this.score!.enabled = false;
         this.cup!.enabled = false;
         this.background!.enabled = false;
         this.home!.button.enabled = false;
+        if (this.top){
+            this.top.enabled = false;
+        }
     }
     open(): void {
         this.score!.enabled = true;
@@ -72,5 +94,8 @@ export default class EndUI implements UI {
         this.cup!.enabled = true;
         this.background!.enabled = true;
         this.home!.button.enabled = true;
+        if (this.top){
+            this.top.enabled = true;
+        }
     }
 }
