@@ -95,11 +95,11 @@ export default class Manager {
         }
     }
 
-    public getStatus(id: string){
+    public getStatus(id: string) {
         return this.roomManager.getStatus(id);
     }
 
-    public updateWord() {
+    public update() {
         this.worldManager.update();
         this.roomManager.update();
         const dataAttack = this.worldManager.getCollisonProjectile();
@@ -107,21 +107,27 @@ export default class Manager {
             this.roomManager.updateAttack(data);
         });
         const playerDies = this.roomManager.getPlayerDies();
-        for (const idRoom in playerDies){
+        for (const idRoom in playerDies) {
             const dataPlayerDies = playerDies[idRoom];
-            dataPlayerDies.forEach(idPlayer => {
+            dataPlayerDies.forEach((idPlayer) => {
                 this.worldManager.resetPlayer(idRoom, idPlayer);
                 this.roomManager.revivePlayer(idPlayer);
-            })
+            });
         }
         const roomDie = this.roomManager.getRoomEnd();
-        roomDie.forEach(idRoom => {
+        roomDie.forEach((idRoom) => {
             this.roomManager.removeRoom(idRoom);
             this.worldManager.removeWorld(idRoom);
+        });
+        const verifyWorld = this.worldManager.getVerify();
+        verifyWorld.forEach((players, idRoom) => {
+            players.forEach(idPlayer => {
+                this.roomManager.verify(idRoom, idPlayer);
+            })
         })
     }
 
-    public getSizeMax(): number{
+    public getSizeMax(): number {
         return this.roomManager.maxSize;
     }
 
@@ -154,16 +160,19 @@ export default class Manager {
     public getDataPlayerAll() {
         return this.roomManager.getAllDataPlayer();
     }
-    public getDataTimeAll(){
+    public getDataTimeAll() {
         return this.roomManager.getAllDataTime();
     }
     public getDataScoreAll() {
         return this.roomManager.getAllDataScore();
     }
-    public getDataNamePlayerAll(){
+    public getDataNamePlayerAll() {
         return this.roomManager.getDataNamePlayer();
     }
     public getDataSizeRoomAll() {
         return this.roomManager.getDataSizeRooms();
+    }
+    public getDataRankAll() {
+        return this.roomManager.getDataRanks();
     }
 }

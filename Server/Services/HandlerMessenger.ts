@@ -178,6 +178,7 @@ export default class HandlerMessenger {
             }
         });
     }
+
     public senDataTime() {
         let datas = Manager.gI().getDataTimeAll();
         this.clients.forEach((key, ws) => {
@@ -191,6 +192,20 @@ export default class HandlerMessenger {
                         ...datas[idRoom],
                     };
                     ws.send(new Messenger(305, dataSend).toString());
+                }
+            }
+        });
+    }
+
+    public senDataRank(){
+        let datas = Manager.gI().getDataRankAll();
+        this.clients.forEach((key, ws) => {
+            let idPlayer: string | undefined;
+            idPlayer = this.getIdPlayerByWs(ws);
+            if (idPlayer && idPlayer == key) {
+                let idRoom = Manager.gI().getIdRoomByIdPlayer(idPlayer);
+                if (idRoom  && Manager.gI().getStatus(idRoom) == 'end') {
+                    ws.send(new Messenger(306, datas[idRoom][idPlayer]).toString());
                 }
             }
         });

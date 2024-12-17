@@ -104,6 +104,14 @@ export default class RoomManager {
         return null;
     }
 
+    public verify(idRoom: string, idPlayer: string) {
+        const room = this.getRoom(idRoom);
+        if (!room){
+            return;
+        }
+        room.verify(idPlayer);
+    }
+
     public addPlayer(id: string, idPlayer: string): boolean {
         for (const room of this.rooms) {
             if (room.getId() == id) {
@@ -175,6 +183,14 @@ export default class RoomManager {
         return result;
     }
 
+    public getDataRanks(): Record<string, any> {
+        let result: Record<string, any> = {};
+        for (const room of this.rooms) {
+            result[room.getId()] = room.getRank();
+        }
+        return result;
+    }
+
     public getDataSizeRooms(): Record<string, number> {
         let result: Record<string, number> = {};
         for (const room of this.rooms) {
@@ -195,13 +211,14 @@ export default class RoomManager {
         let result: Record<
             string,
             {
-                id: string;
-                name: string;
-                char: number;
-                hpMax: number;
-                hp: number;
-                point: number;
-                dame: number;
+                id: string,
+                name: string,
+                char: number,
+                hpMax: number,
+                hp: number,
+                point: number,
+                pointEnd: number,
+                dame: number,
             }
         > = {};
         this.rooms.forEach((room) => {

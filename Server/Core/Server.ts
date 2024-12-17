@@ -95,5 +95,6 @@ export default class Server {
         this.handlerMessenger.sendAnys();
         this.handlerMessenger.senDataRoom();
         this.handlerMessenger.senDataTime();
+        this.handlerMessenger.senDataRank();
     }
 }

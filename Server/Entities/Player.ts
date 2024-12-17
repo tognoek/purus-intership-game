@@ -3,18 +3,22 @@ export default class Player {
     private name: string;
     private hp: number;
     private point: number;
+    private pointEnd: number;
     private dame: number;
     private idChar: number;
     private maxHp: number;
+    private deathTime: number;
 
     constructor(id: string, name: string | null) {
         this.id = id;
         this.name = name ?? this.id;
-        this.maxHp = 5;
+        this.maxHp = 100;
         this.hp = this.maxHp;;
         this.point = 0;
+        this.pointEnd = 0;
         this.dame = 10;
         this.idChar = 0;
+        this.deathTime = 10;
     }
 
     public revive(){
@@ -23,6 +27,27 @@ export default class Player {
 
     public isDie(){
         return this.hp < 1;
+    }
+
+    public resetPrivate(){
+        this.point = 0;
+    }
+
+    public getBonus(){
+        return Math.floor(this.point / 100 * 20);
+    }
+
+    public verify(){
+        if (this.point < 1){
+            return;
+        }
+        if (this.deathTime < 0){
+            this.point -= 1;
+            this.pointEnd += 1;
+            this.deathTime = 10;
+            return;
+        }
+        this.deathTime -= 1;
     }
 
     public setChar(id: number) {
@@ -56,7 +81,7 @@ export default class Player {
     }
 
     public getPoint(): number {
-        return this.point;
+        return this.pointEnd;
     }
 
     public getDame(): number {
@@ -85,6 +110,7 @@ export default class Player {
             hpMax: this.maxHp,
             hp: this.hp,
             point: this.point,
+            pointEnd: this.pointEnd,
             dame: this.dame,
         };
     }
@@ -94,6 +120,7 @@ export default class Player {
             name: this.name,
             char: this.idChar,
             point: this.point,
+            pointEnd: this.point,
         };
     }
 }

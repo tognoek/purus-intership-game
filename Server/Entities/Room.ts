@@ -17,9 +17,9 @@ export default class Room {
         this.id = id;
         this.players = new Set();
         this.isChar = [false, false, false, false, false];
-        this.timePlay = 15; // 5,
+        this.timePlay = 2 * 60; // 5,
         this.timeBegin = 5000; // 5s
-        this.timeEnd = 15; // 10s
+        this.timeEnd = 1; // 10s
         this.status = 'create';
         this.idTimeClear = null;
     }
@@ -70,6 +70,10 @@ export default class Room {
         }
     }
 
+    public verify(idPlayer: string){
+        this.getPlayer(idPlayer)?.verify();
+    }
+
     private setStatus(status: string){
         this.status = status;
     }
@@ -118,7 +122,8 @@ export default class Room {
             const dame = attack.getDame();
             victim.updateHp(-dame);
             if (victim.isDie()) {
-                attack.updatePoint(5);
+                attack.updatePoint(5 + victim.getBonus());
+                victim.resetPrivate();
             }
         }
     }
@@ -170,17 +175,31 @@ export default class Room {
         return reslut;
     }
 
+    public getRank(): Record<string, {score: number, top: number}>{
+        let result: Record<string, {score: number, top: number}> = {};
+        const data = Array.from(this.players).sort((a, b) => {
+            return b.getPoint() - a.getPoint();
+        });
+        let max = 4;
+        data.forEach(player => {
+            result[player.getId()] = {score: player.getPoint(), top: max};
+            max = max - 1;
+        })
+        return result;
+    }
+
     public getAllDataPlayers() {
         let result: Record<
             string,
             {
-                id: string;
-                name: string;
-                char: number;
-                hpMax: number;
-                hp: number;
-                point: number;
-                dame: number;
+                id: string,
+                name: string,
+                char: number,
+                hpMax: number,
+                hp: number,
+                point: number,
+                pointEnd: number,
+                dame: number,
             }
         > = {};
         this.players.forEach((player) => {

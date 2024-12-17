@@ -145,13 +145,9 @@ export default class World {
         Models.getInstance().setInfo({ x: 0, y: -0.5, z: 0 }, groundSize, groundMass);
         const groundRigidBody = Models.getInstance().createRigidBody();
         this.physicWorld.addRigidBody('ground', groundRigidBody);
-        // Chiều cao và độ dày của tường
         const wallHeight = 8;
         const wallThickness = 1;
         const wallMass = 0;
-
-        // Tạo các bức tường xung quanh
-        // Tường bên trái
         Models.getInstance().setInfo(
             { x: -groundSize.x / 2, y: wallHeight / 2, z: 0 },
             { x: wallThickness, y: wallHeight, z: groundSize.z },
@@ -159,8 +155,6 @@ export default class World {
         );
         const leftWall = Models.getInstance().createRigidBody();
         this.physicWorld.addRigidBody('leftWall', leftWall);
-
-        // Tường bên phải
         Models.getInstance().setInfo(
             { x: groundSize.x / 2, y: wallHeight / 2, z: 0 },
             { x: wallThickness, y: wallHeight, z: groundSize.z },
@@ -168,8 +162,6 @@ export default class World {
         );
         const rightWall = Models.getInstance().createRigidBody();
         this.physicWorld.addRigidBody('rightWall', rightWall);
-
-        // Tường phía trước
         Models.getInstance().setInfo(
             { x: 0, y: wallHeight / 2, z: -groundSize.z / 2 },
             { x: groundSize.x, y: wallHeight, z: wallThickness },
@@ -177,8 +169,6 @@ export default class World {
         );
         const frontWall = Models.getInstance().createRigidBody();
         this.physicWorld.addRigidBody('frontWall', frontWall);
-
-        // Tường phía sau
         Models.getInstance().setInfo(
             { x: 0, y: wallHeight / 2, z: groundSize.z / 2 },
             { x: groundSize.x, y: wallHeight, z: wallThickness },
@@ -190,6 +180,21 @@ export default class World {
 
     public getAnys() {
         return this.anys;
+    }
+
+    public checkAreaVerify(x: number, z: number): boolean{
+        return (Math.abs(x) < 3) && (Math.abs(z) < 3)
+    }
+
+    public getVerifyWorld(): string[]{
+        let result: string[] = [];
+        this.players.forEach((id) => {
+            let position = this.physicWorld.getRigidBodyPosition(id);
+            if (position && this.checkAreaVerify(position.x, position.z)) {
+                result.push(id);
+            }
+        });
+        return result;
     }
 
     public getData(): Record<string, { x: number; y: number; z: number; angle: number }> {

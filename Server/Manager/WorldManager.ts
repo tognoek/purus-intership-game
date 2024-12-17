@@ -15,7 +15,7 @@ export default class WorldManager {
         return this.worlds.get(idRoom);
     }
 
-    public removeWorld(idRoom: string){
+    public removeWorld(idRoom: string) {
         this.worlds.delete(idRoom);
     }
 
@@ -33,16 +33,16 @@ export default class WorldManager {
 
     public removePlayer(idRoom: string, idPlayer: string) {
         const wolrd = this.worlds.get(idRoom);
-        if (!wolrd){
+        if (!wolrd) {
             return;
         }
         wolrd.removePlayer(idPlayer);
-        if (wolrd.getSize() < 1){
+        if (wolrd.getSize() < 1) {
             this.delete(idPlayer);
         }
     }
 
-    public delete(idRoom: string){
+    public delete(idRoom: string) {
         this.worlds.delete(idRoom);
     }
 
@@ -50,6 +50,14 @@ export default class WorldManager {
         this.worlds.forEach((world) => {
             world.update(null);
         });
+    }
+
+    public getVerify(): Map<string, string[]> {
+        let result: Map<string, string[]> = new Map();
+        this.worlds.forEach((wolrd, key) => {
+            result.set(key, wolrd.getVerifyWorld());
+        });
+        return result;
     }
 
     public getPositions(): Record<string, any> {
@@ -84,7 +92,7 @@ export default class WorldManager {
         return result;
     }
 
-    public getProjectiles(){
+    public getProjectiles() {
         let result: Record<string, any> = {};
         this.worlds.forEach((world, id) => {
             result[id] = world.getProjectile();
@@ -92,8 +100,8 @@ export default class WorldManager {
         return result;
     }
 
-    public getCollisonProjectile(){
-        let result: {playerA: string, playerB: string}[] = [];
+    public getCollisonProjectile() {
+        let result: { playerA: string; playerB: string }[] = [];
         this.worlds.forEach((world, id) => {
             result.push(...world.getCollisionProjectile());
         });
